@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "fx/glitch.h"
 #include "apps/file_explorer.h"
+#include "apps/image_viewer.h"
 #include "apps/text_editor.h"
 #include "apps/terminal.h"
 #include "apps/password_dialog.h"
@@ -56,6 +57,7 @@ unique_ptr<App> Kernel::make_app(const string& name, const string& arg){
     if (name == "text_editor") return make_unique<TextEditor>(arg);
     if (name == "terminal") return make_unique<Terminal>();
     if (name == "password_dialog") return make_unique<PasswordDialog>(arg);
+    if (name == "image_viewer") return make_unique<ImageViewer>(arg);
     return nullptr;
 }
 

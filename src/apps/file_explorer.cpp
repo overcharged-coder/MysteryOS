@@ -4,6 +4,13 @@
 
 using namespace std;
 
+static bool is_image_file(const string& name) {
+    auto dot = name.rfind('.');
+    if (dot == string::npos) return false;
+    string ext = name.substr(dot);
+    return ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif" || ext == ".bmp";
+}
+
 void FileExplorer::render(Kernel& k){
     float w = ImGui::GetContentRegionAvail().x;
     ImGui::BeginChild("##tree", {w * 0.35f, 0}, true);
@@ -49,10 +56,10 @@ void FileExplorer::render_contents(Kernel& k, VFSNode* dir, const string& path){
                 if (ImGui::IsItemClicked()) k.launch("password_dialog", child_path);
             } else if (child->corrupted) {
                 ImGui::TextColored({1, 0.4f, 0.4f, 1}, "%s", name.c_str());
-                if (ImGui::IsItemClicked()) k.launch("text_editor", child_path);
+                if (ImGui::IsItemClicked()) k.launch(is_image_file(name) ? "image_viewer" : "text_editor", child_path);
             } else {
                 ImGui::Text("%s", name.c_str());
-                if (ImGui::IsItemClicked()) k.launch("text_editor", child_path);
+                if (ImGui::IsItemClicked()) k.launch(is_image_file(name) ? "image_viewer" : "text_editor", child_path);
             }
         }
     }

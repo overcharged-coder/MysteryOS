@@ -13,6 +13,7 @@ set(IMGUI_SOURCES
 )
 
 set(GAME_SOURCES
+    src/apps/image_viewer.cpp
     src/main.cpp
     src/kernel/kernel.cpp
     src/kernel/vfs.cpp

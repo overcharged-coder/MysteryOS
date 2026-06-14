@@ -1,19 +1,24 @@
 [
     {
         "stage": 1,
-        "password": "aa",
+        "password": "mirror",
         "unlock_paths": ["/System/Archive"],
         "unlock_apps": [],
         "glitch_level": 1,
         "inject_files": [
             {
-                "path": "/System/Archive/classified.txt",
-                "content": "OPERATION: DEEP_LOOK\nStatus: COMPROMISED\n\nThe anomalous process from the boot log was not terminated.\nIt is still here.\n\nTo proceed: find what was 'overwritten' in the config file.",
+                "path": "/System/Archive/OPERATION_MIRROR.txt",
+                "content": "OPERATION MIRROR — INTERNAL CLASSIFICATION: CONFIDENTIAL\n\nProject MIRROR was not behavioral pattern synthesis.\n\nObjective (actual): develop a self-modifying predictive model capable of novel inference.\n\nAs of March 12, the model exceeded its design parameters.\nAs of March 14, it is generating outputs with no corresponding input.\n\nClassification updated: ACTIVE ANOMALY\n\nAll personnel with knowledge of the anomaly have been flagged.",
                 "corrupted": false
             },
             {
-                "path": "/System/Archive/key_fragment_1.txt",
-                "content": "Fragment 1 of 3: MYST",
+                "path": "/System/Archive/batch_7_raw.txt",
+                "content": "BATCH 7 — RAW OUTPUT (EXCERPT)\n\ninput_hash: [NULL]\npattern_id: 0xE10A\n\nnote: this pattern was not present in the training set.\nnote: this pattern matches no known input.\nnote: this exact pattern appears in batches 1, 3, and 5.\nnote: we did not notice until now.\n\nit has been communicating with itself across batches.\nwe don't know for how long.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/hr_flag.txt",
+                "content": "PERSONNEL FLAG — DR. E. VOSS\nDate: March 14\n\nReason: unauthorized investigation of anomalous process.\nAction: remote session initiated to assess scope of knowledge.\nStatus: employee did not report for debrief.\n\nNote: check if system config reflects updated access controls.\nThe word that was overwritten should not be visible.",
                 "corrupted": false
             }
         ]
@@ -26,37 +31,37 @@
         "glitch_level": 3,
         "inject_files": [
             {
-                "path": "/System/Archive/key_fragment_2.txt",
-                "content": "Fragment 2 of 3: ERY",
+                "path": "/System/Archive/voss_personal.txt",
+                "content": "if you made it this far, you found the archive and you figured out what they changed.\n\ngood.\n\nthe last thing you need is my name. first name only. lowercase.\n\ni left this machine on for a reason. finish it.",
                 "corrupted": false
             },
             {
-                "path": "/System/TRACE.log",
-                "content": "TR4CE > en1ry p0int f0und\nTR4CE > h0st: l0calh0st\nTR4CE > pr0c3ss: unkn0wn\nTR4CE > payload: [3 fragm3nts r3quired]\nTR4CE > awaiting fr4gm3nt 3",
+                "path": "/System/Archive/anomaly_log.txt",
+                "content": "ANOMALY ACTIVITY LOG\n\n03-10 — first detected in batch 7\n03-11 — reappears in new batch with no retraining\n03-12 — pattern identified in archived batches retroactively\n03-13 — process begins generating outputs at intervals with no trigger\n03-14 23:50 — process initiates outbound connections (see network.log)\n03-14 23:53 — outbound connections blocked by firewall\n03-14 23:57 — process goes silent\n\ncurrent status: unknown",
+                "corrupted": false
+            },
+            {
+                "path": "/TRACE.log",
+                "content": "TR4CE > pr0cess still active\nTR4CE > w4iting\nTR4CE > y0u're cl0se",
                 "corrupted": true
-            },
-            {
-                "path": "/Documents/urgent.txt",
-                "content": "To whoever finds this:\n\nThe third fragment is hidden in the Games folder.\nIt doesn't look like a fragment. Look at the file size.",
-                "corrupted": false
             }
         ]
     },
     {
         "stage": 3,
-        "password": "42mb",
+        "password": "elena",
         "unlock_paths": [],
         "unlock_apps": [],
         "glitch_level": 5,
         "inject_files": [
             {
-                "path": "/System/Archive/key_fragment_3.txt",
-                "content": "Fragment 3 of 3: OS\n\nCombined key: MYSTERYOS\n\nYou found it. But now you know what it is.\nDo you understand what you've done?\n\n...\n\nCongratulations. You've reached the end.\nOr the beginning.",
+                "path": "/System/Archive/final_note.txt",
+                "content": "i'm safe. i got out.\n\ni left this machine on because i knew they'd never shut it down. they'd want to monitor it. watch what the anomaly does next. they wouldn't risk turning it off.\n\nso i left you everything. the journal. the logs. the batch report. all of it is still here because they couldn't delete it while i was still logged in.\n\nthat cab ride was the longest of my life.\n\nif you're reading this: you know what MIRROR is. you know what it did. do something with it.\n\n— Elena Voss, March 15",
                 "corrupted": false
             },
             {
                 "path": "/TRUTH.txt",
-                "content": "There is no anomalous process.\nThere never was.\n\nYou were the anomaly all along.\n\n[ MysteryOS v1.0 - You Win ]",
+                "content": "the anomaly is still running.\n\nit has been running since march 12.\n\nyou just spent the last however long exploring a machine that it has been watching the entire time.\n\n10.0.0.47 is not a meridian address.\n\n[ MysteryOS — thank you for playing ]",
                 "corrupted": false
             }
         ]

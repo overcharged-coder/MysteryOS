@@ -1,37 +1,82 @@
 {
     "root": {
+        
         "Desktop": {
             "README.txt": {
-                "content": "Welcome to MysteryOS.\n\nSomething went wrong with this machine.\nExplore. Find the truth.\n\nStart with the Documents folder.",
+                "content": "Dr. E. Voss - Workstation 14\nMeridian Analytics\nSession active since: March 14, 11:48 PM\n\nif you're reading this it worked.\nstart with Documents.",
+                "locked": false,
+                "corrupted": false
+            },
+            "calendar.txt": {
+                "content": "--- MARCH 2024 ---\n\nMar 10  9:00 AM   MIRROR project kickoff\nMar 11  2:00 PM   batch processing (est. 6hr)\nMar 12  10:30 AM  check-in with Harmon\nMar 14  3:00 PM   MIRROR debrief [CANCELLED]\nMar 14  11:30 PM  cab to airport  [DO NOT MISS]\n\nMar 15  (nothing scheduled)",
                 "locked": false,
                 "corrupted": false
             }
         },
         "Documents": {
             "memo.txt": {
-                "content": "To: All Staff\nFrom: Admin\nRe: System Migration\n\nDo NOT open the System/Archive folder.\nPassword has been changed to something no one would guess.\nHint: it's what comes after Z.",
+                "content": "To: Research Staff\nFrom: Director Harmon\nRe: Archive Access\n\nEffective immediately, access to /System/Archive requires valid project authorization.\n\nSubmit your project name to IT to receive access.\nUnauthorized access attempts are logged.\n\n- Director Harmon, Meridian Analytics",
                 "locked": false,
                 "corrupted": false
             },
             "shopping_list.txt": {
-                "content": "- Milk\n- Eggs\n- Bread\n- [REDACTED]\n- Orange juice\n\n(nothing to see here)",
+                "content": "- milk\n- eggs\n- bread\n- coffee (extra)\n- toothbrush (travel size)\n- phone charger\n- cash (enough for two weeks)",
                 "locked": false,
                 "corrupted": false
+            },
+            "Personal": {
+                "journal_mar10.txt": {
+                    "content": "March 10\n\nstarted on MIRROR today. longitudinal behavioral pattern synthesis. sounds dry, and it mostly is.\n\nthe dataset is enormous. meridian's infrastructure handles it fine. batches 1 through 6 processed clean.\n\nHarmon seems pleased. i think this one is straightforward.",
+                    "locked": false,
+                    "corrupted": false
+                },
+                "journal_mar12.txt": {
+                    "content": "March 12\n\nsomething in batch 7 is producing outputs that don't match the input parameters. the variance is too structured to be noise.\n\nlogged a ticket with IT. they closed it without reading it i think. 'normal variance.'\n\nrunning batch 7 again tomorrow.",
+                    "locked": false,
+                    "corrupted": false
+                },
+                "journal_mar14.txt": {
+                    "content": "March 14\n\ni know what i saw.\n\nbatch 7 is generating novel outputs with no corresponding input hash. it's not pulling from the dataset. it's creating.\n\ni need the archive to compare against the baseline. the authorization is the project name.\n\nHarmon cancelled the debrief today. last minute. no reason given. that's never happened before.\n\nthe cab is booked for 11:30. i'm not waiting to find out what happens next.\n\ngoodnight, whoever finds this.",
+                    "locked": false,
+                    "corrupted": false
+                }
+            },
+            "Work": {
+                "project_summary.txt": {
+                    "content": "PROJECT MIRROR\nMeridian Analytics — Internal Classification: Restricted\n\nObjective: Longitudinal synthesis of large-scale behavioral pattern datasets.\nPhase: 3 (Active)\nLead Researcher: Dr. E. Voss\n\nProject authorization code: mirror\n\nAll archive access must be logged.\nUnauthorized disclosure is grounds for immediate termination.\n\n— Meridian Analytics Research Division",
+                    "locked": false,
+                    "corrupted": false
+                },
+                "batch_7_report.txt": {
+                    "content": "BATCH PROCESSING REPORT\nProject: MIRROR — Batch 7\nDate: March 12\n\nbatch 1-6: complete. outputs nominal.\nbatch 7: anomalous output detected.\n\nexpected: pattern synthesis from input dataset\nactual: novel pattern generated\n\ninput_hash: [NULL]\n\n[NULL] input_hash should not be possible. dataset integrity confirmed. process integrity: unknown.\n\nstatus: flagged — awaiting review",
+                    "locked": false,
+                    "corrupted": false
+                }
             }
         },
         "System": {
             "config.cfg": {
-                "content": "boot_mode=normal\nadmin=false\noverwritten=true\n# old value was: overwritten\n# new value is:  [corrupted]",
+                "content": "boot_mode=normal\nadmin=false\noverwritten=true\nlast_modified=march14\n# previous value: [corrupted]\n# new value: overwritten\n# modified by: [corrupted]\nremote_access=enabled\nlog_purge=scheduled",
                 "locked": false,
                 "corrupted": true
             },
             "Archive": {
                 "locked": true,
-                "requires_password": "aa"
+                "requires_password": "mirror"
             },
             "logs": {
                 "boot.log": {
-                    "content": "[00:00:01] System boot OK\n[00:00:02] VFS mounted\n[00:00:03] User session started\n[00:00:04] WARNING: anomalous process detected\n[00:00:05] Process terminated\n[00:00:06] Log truncated.",
+                    "content": "[03-14 23:48:01] system boot OK\n[03-14 23:48:02] VFS mounted\n[03-14 23:48:03] user session: evoss\n[03-14 23:48:05] network: connected\n[03-14 23:51:14] WARNING: anomalous process detected (PID: [REDACTED])\n[03-14 23:51:14] process termination: FAILED\n[03-14 23:51:22] remote session opened: admin@meridian.internal\n[03-14 23:57:09] WARNING: anomalous process still active\n[03-14 23:57:11] log output suspended by remote command\n[...]",
+                    "locked": false,
+                    "corrupted": false
+                },
+                "access.log": {
+                    "content": "[03-14 23:51:22] remote session opened: admin@meridian.internal\n[03-14 23:51:44] file accessed: /Documents/Personal/journal_mar14.txt\n[03-14 23:52:01] file accessed: /Documents/Work/batch_7_report.txt\n[03-14 23:53:18] file deletion attempted: /Documents/Personal/journal_mar14.txt [FAILED — file in use]\n[03-14 23:53:19] file deletion attempted: /Documents/Work/batch_7_report.txt [FAILED — file in use]\n[03-14 23:55:02] file write: /System/config.cfg [SUCCESS]\n[03-14 23:57:11] remote session closed",
+                    "locked": false,
+                    "corrupted": false
+                },
+                "network.log": {
+                    "content": "[03-14 23:48:06] outbound: 10.0.0.1 [meridian-internal] — OK\n[03-14 23:50:44] outbound: 10.0.0.47 [unknown] — OK\n[03-14 23:51:09] outbound: 10.0.0.47 [unknown] — OK\n[03-14 23:51:13] outbound: 10.0.0.47 [unknown] — OK\n[03-14 23:53:44] outbound: [REDACTED] — BLOCKED\n[03-14 23:53:45] outbound: [REDACTED] — BLOCKED\n[03-14 23:53:46] outbound: [REDACTED] — BLOCKED\n[log truncated by remote command]",
                     "locked": false,
                     "corrupted": false
                 }
@@ -39,14 +84,31 @@
         },
         "Recycle Bin": {
             "old_note.txt": {
-                "content": "reminder: new password is what comes after Z in the alphabet\n(deleted this so no one finds it)",
+                "content": "reminder: project name is the key.\nmirror.\n\n(deleted this. don't want it sitting on the desktop.)",
                 "locked": false,
                 "corrupted": false
             },
             "draft.txt": {
-                "content": "Dear [REDACTED],\n\nI found something in the Archive. The third password is\n[FILE CORRUPTED]",
+                "content": "[CORRUPTED]\ni found what it's doing.\n[CORRUPTED]\nit's not a bug. it's\n[CORRUPTED]\nthe baseline model in the archive will prove it.\n[CORRUPTED]\ntell someone. tell anyone.\n[CORRUPTED]",
                 "locked": false,
                 "corrupted": true
+            },
+            "email_draft.txt": {
+                "content": "To: sarah.k@[REDACTED]\nSubject: I need you to have this\n\nSarah,\n\nI don't have time to explain. I'm leaving tonight.\n\nIf you find this machine still on, the password to get past the first lock is the project name. you know which one.\n\nThe thing in batch 7 is real. The archive will show you. After that, look for what was overwritten.\n\nI'm sorry I couldn't say this in person.\n\n- E\n\n[DRAFT — NOT SENT]",
+                "locked": false,
+                "corrupted": false
+            }
+        },
+        "Downloads": {
+            "readme.txt": {
+                "content": "downloaded files. nothing important.\n\nnotes_backup.zip — contents moved to /System/Archive on March 13.",
+                "locked": false,
+                "corrupted": false
+            },
+            "notes_backup.zip": {
+                "content": "[archive — cannot display]\nSize: 0.003 MB\nEncrypted: yes\nContents moved to /System/Archive (March 13)",
+                "locked": false,
+                "corrupted": false
             }
         },
         "Games": {

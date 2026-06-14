@@ -1,1 +1,0 @@
-C:\Users\manoj\emsdk\upstream\emscripten\em++.exe -O3 -DNDEBUG -sUSE_SDL=2 -sUSE_WEBGL2=1 -sFULL_ES3=1 -sALLOW_MEMORY_GROWTH=1 --preload-file C:/Users/manoj/StarDance/MysteryOS/data@/data --shell-file C:/Users/manoj/StarDance/MysteryOS/web/shell.html @CMakeFiles\mysteryos.dir\objects1.rsp -o mysteryos.html

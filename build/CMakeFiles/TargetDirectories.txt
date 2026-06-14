@@ -1,3 +1,0 @@
-C:/Users/manoj/StarDance/MysteryOS/build/CMakeFiles/mysteryos.dir
-C:/Users/manoj/StarDance/MysteryOS/build/CMakeFiles/edit_cache.dir
-C:/Users/manoj/StarDance/MysteryOS/build/CMakeFiles/rebuild_cache.dir

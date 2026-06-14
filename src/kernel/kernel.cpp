@@ -7,15 +7,41 @@
 #include "apps/terminal.h"
 #include "apps/password_dialog.h"
 #include <algorithm>
+#include <emscripten.h>
 
 using namespace std;
 
 bool Kernel::init() {
     if (!vfs_.load("/data/filesystem.json")) return false;
     if (!puzzle_.load("/data/puzzles.json")) return false;
-    puzzle_.set_callback([this](const StageUnlock&) {
-        Glitch::set_level(puzzle_.glitch_level());
+    puzzle_.set_callback([this](const StageUnlock& u) {
+        int level = puzzle_.glitch_level();
+        Glitch::set_level(level);
+        float freq = 60.0f + level * 18.0f;
+        float gain = 0.04f + level * 0.012f;
+        char js[256];
+        snprintf(js, sizeof(js),
+            "if(window._mysteryOsc){"
+            "  window._mysteryOsc.osc.frequency.setTargetAtTime(%.1f, window._mysteryOsc.ctx.currentTime, 2);"
+            "  window._mysteryOsc.gain.gain.setTargetAtTime(%.3f, window._mysteryOsc.ctx.currentTime, 2);"
+            "}",
+            freq, gain);
+        emscripten_run_script(js);
     });
+    emscripten_run_script(
+        "window._mysteryOsc = (function(){"
+        "  var ctx = new AudioContext();"
+        "  var osc = ctx.createOscillator();"
+        "  var gain = ctx.createGain();"
+        "  osc.type = 'sine';"
+        "  osc.frequency.value = 60;"
+        "  gain.gain.value = 0.04;"
+        "  osc.connect(gain);"
+        "  gain.connect(ctx.destination);"
+        "  osc.start();"
+        "  return {osc: osc, gain: gain, ctx: ctx};"
+        "})();"
+    );
     return true;
 }
 

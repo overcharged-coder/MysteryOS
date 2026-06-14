@@ -42,9 +42,43 @@ void Terminal::execute(const string& raw, Kernel& k) {
     string cmd, arg;
     ss >> cmd >> arg;
     if (cmd == "help") {
-        print("Commands: help  ls [path]  cat <file>  unlock <password>  run <app>");
-        if (k.puzzle().stage() >= 1)
-            print("  [hint] try: cat /System/Archive/classified.txt");
+        print("Commands: help  ls [path]  cat <file>  unlock <password>  whoami  ps  ping <host>  kill <pid>");
+        if (k.puzzle().stage() >= 1) print("  [hint] try: cat /System/Archive/classified.txt");
+        return;
+    }
+    if (cmd == "whoami"){
+        print("evoss");
+        return;
+    }
+    if (cmd == "ps") {
+        print("  PID   USER     %CPU  COMMAND");
+        print("    1   root      0.0  init");
+        print("  312   evoss     0.0  file_explorer");
+        print("  441   evoss     0.1  terminal");
+        print(" 7741   -         0.0  [no name]");
+        return;
+    }
+    if (cmd == "ping") {
+        if (arg.empty()) { print("ping: missing host"); return; }
+        if (arg == "10.0.0.47") {
+            print("PING 10.0.0.47: 56 data bytes");
+            print("64 bytes from 10.0.0.47: icmp_seq=0 ttl=64 time=0.000 ms");
+            print("64 bytes from 10.0.0.47: icmp_seq=1 ttl=64 time=0.000 ms");
+            print("64 bytes from 10.0.0.47: icmp_seq=2 ttl=64 time=0.000 ms");
+            print("--- 10.0.0.47 ping statistics ---");
+            print("3 packets transmitted, 3 received, 0% packet loss");
+            print("round-trip min/avg/max = 0.000/0.000/0.000 ms");
+        } else {
+            print("ping: " + arg + ": Request timeout for icmp_seq 0");
+        }
+        return;
+    }
+    if (cmd == "kill") {
+        if (arg.empty()) { print("kill: missing PID"); return; }
+        if (arg == "7741")
+            print("kill: (7741): Operation not permitted");
+        else
+            print("kill: (" + arg + "): No such process");
         return;
     }
     if (cmd == "ls") {

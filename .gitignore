@@ -1,0 +1,4 @@
+build/
+build_native/
+*.o
+*.d

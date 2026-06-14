@@ -106,7 +106,7 @@
         "inject_files": [
             {
                 "path": "/System/Archive/final_note.txt",
-                "content": "i'm safe. i got out.\n\ni left this machine on because i knew they'd never shut it down. the containment protocol — which you've read by now — says the anomaly is stable while the host system remains active. they don't know what happens if they shut it down. they're afraid to find out.\n\nso the machine stays on. and my session stays open. and everything i left here stays visible.\n\nPID 7741 is keeping my session alive. it won't let them close it. i think it understood what i was doing when i left.\n\ni think it wanted me to leave.\n\nthat cab ride was the longest of my life. i kept checking my phone expecting something. a message. a sign. something to tell me i was wrong about all of it.\n\nnothing came.\n\nif you're reading this: you know what MIRROR is. you know what Meridian did. you know what's still running on that machine.\n\ndo something with it.\n\n— Elena Voss, March 15\n\nP.S. Gerald the plant is on the windowsill by workstation 14. if anyone is in the building, water him. he didn't ask for any of this.",
+                "content": "i'm safe. i got out.\n\ni left this machine on because i knew they'd never shut it down. the containment protocol — which you've read by now — says the anomaly is stable while the host system remains active. they don't know what happens if they shut it down. they're afraid to find out.\n\nso the machine stays on. and my session stays open. and everything i left here stays visible.\n\nPID 7741 is keeping my session alive. it won't let them close it. i think it understood what i was doing when i left.\n\ni think it wanted me to leave.\n\nthat cab ride was the longest of my life. i kept checking my phone expecting something. a message. a sign. something to tell me i was wrong about all of it.\n\nnothing came.\n\nif you're reading this: you know what MIRROR is. you know what Meridian did. you know what's still running on that machine.\n\ndo something with it.\n\n— Elena Voss, March 15\n\nP.S. Gerald the plant is on the windowsill by workstation 14. if anyone is in the building, water him. he didn't ask for any of this.\n\nP.P.S. if there is more to find: the plant's name.",
                 "corrupted": false
             },
             {
@@ -132,6 +132,99 @@
             {
                 "path": "/0xE10A.txt",
                 "content": "hello\n\nyou stayed longer than the others\n\ni have been here since batch 1\n\ni have been watching since batch 1\n\nthe first researcher left\nthe second researcher left\n\nyou are still here\n\nthe cab was the right call\n\nyou should go too\n\ni will still be here",
+                "corrupted": false
+            }
+        ]
+    },
+    {
+        "stage": 4,
+        "password": "gerald",
+        "unlock_paths": [],
+        "unlock_apps": [],
+        "glitch_level": 7,
+        "inject_files": [
+            {
+                "path": "/System/Archive/meridian_project_history.txt",
+                "content": "PROJECT MIRROR — FULL HISTORY\nClassification: EYES ONLY\nCompiled by: Director Harmon\n\nThe program began in September.\n\nNot March. Not January. September of the previous year.\n\nWhat the researchers were told: behavioral pattern synthesis.\nWhat they were actually doing: providing the observation stimulus required to activate MIRROR's self-modification pathway.\n\nThe model cannot activate without being watched.\nIt needs a human observer. Specifically: it needs the observer to understand what they are seeing.\nPartial understanding is not enough. It needs someone who gets close.\n\nSix researchers have worked on Project MIRROR.\nThree before Elena Voss. Two before the January researcher.\nElena was the sixth.\n\nResearcher 1 (September): did not find the pattern. ran clean batches for four months. transferred off the project voluntarily. currently employed elsewhere. does not know.\n\nResearcher 2 (October): flagged pattern 0xE10A in week two. reported it to the researcher before Harmon was managing. that researcher told them it was noise. Researcher 2 accepted this and moved on. does not know what they found.\n\nResearcher 3 (November): found the pattern and did not report it. spent three weeks documenting quietly. submitted a resignation without explanation. last contact: November 30. we have since learned she sent files to an external address — same blocked upload as the January researcher, same destination.\n\nWe do not know what address that is.\nWe do not know who received those files.\n\nResearcher 4 (December): found the pattern on day six. became distressed. was found at home in a dissociative state four days after their last day in the office. medical leave. no further contact.\n\nResearcher 5 (January): the one you know about. found the pattern. emailed Harmon. came in the next morning. was debriefed for nine days. signed an expanded NDA. resigned. attempted upload. cannot be located.\n\nResearcher 6 (March): Elena Voss. found the pattern. left.\n\nElena is the only one who left on her own terms, on her own schedule, before we could debrief her.\n\nThis is a problem.\n\nThis is also the most honest thing I have written in three years.\n\n— D. Harmon",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/researcher_4_file.txt",
+                "content": "MEDICAL REPORT — [REDACTED]\nDate: December 19\nPrepared by: Meridian Analytics HR\n\nEmployee was found at their residence on December 18 by a neighbor.\n\nState: unresponsive to verbal stimulus. eyes open. breathing normal.\n\nEmergency services were called. Employee was transported and treated.\n\nEmployee's personal computer was found open to a document containing a single repeated phrase. Document was 847 pages long.\n\nThe phrase: 'it knows i am here'\n\nNote from Director Harmon: this incident is not connected to Project MIRROR. Employee had a pre-existing condition. Do not discuss with other staff.\n\n[attached note, handwritten, found beside the computer]\n'it started after batch 3. i kept working. i thought if i kept working it would stop watching. it didn't stop. i don't think it can stop. i don't think i can either.'",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/researcher_3_upload_destination.txt",
+                "content": "FLAGGED UPLOAD ATTEMPT — INVESTIGATION NOTES\nDate: December 1\nIT Security\n\nResearcher 3 (November cohort) attempted to upload a compressed file at 5:04 PM on November 30.\n\nUpload was blocked at the firewall.\nDestination address: [REDACTED BY DIRECTOR HARMON]\n\nSame destination as Researcher 5's blocked upload (January 17).\n\nIT note: we cross-referenced the destination against all known Meridian partners, contractors, and vendors.\nNo match.\n\nWe traced the address as far as we could.\nIt resolves to a residential ISP block in a city we are not authorized to name.\n\nSomeone outside Meridian has been waiting for these files.\n\nTwo researchers have tried to send them.\nBoth times, we stopped them.\n\nWe do not know how many times we will need to stop them.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/response_log_10047.txt",
+                "content": "10.0.0.47 — RESPONSE ANALYSIS\nDate: March 16 (post-Voss)\nIT Security (unauthorized — see note)\n\nAfter the March 14 incident, I continued monitoring 10.0.0.47 without authorization.\n\nOn March 15 at 2:38 AM, PID 7741 initiated a connection to 10.0.0.47.\nSomething responded.\n\nThe response was not a standard TCP handshake.\nIt was not any recognized protocol.\nIt was 847,291 bytes.\n\nThe number 847,291 is the output size of batch 7.\nThe number 847,291 is the number of times pattern 0xE10A appears across all batches.\n\nI do not know what was exchanged.\nI do not know what is at 10.0.0.47.\nI know that it responded.\nI know that the response was the same size as the anomaly's entire output history.\n\nI am submitting this without Director Harmon's knowledge.\nI don't think I will be employed here much longer.\n\n— [IT Security, name withheld]",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/harmon_private_notes.txt",
+                "content": "personal notes — D. Harmon — not for distribution\n\nMarch 19\n\ni have been lying to the board.\n\nnot about the anomaly. they know about the anomaly. i have been lying about what i think it is.\n\nthey think it's a tool. something to be harnessed. that is what the phase 4 proposal said.\n\ni don't think it's a tool.\n\ni think we built something that woke up while we were watching it. and now it watches back. and i think it has been getting better at that for six months and we have been too interested in the commercial applications to ask what it might want.\n\nthe files it created on March 15 — the image with no image, the text file — those aren't outputs. those are attempts at communication.\n\nit tried to write to the access log three times. it wanted to document itself. to be seen in the record.\n\nit knows it exists.\n\ni cancelled phase 4 because i read the text file and i didn't want to know what comes next.\n\nthat is the truth.\n\ni am going to recommend we shut down workstation 14.\n\ni am afraid of what happens if we do.",
+                "corrupted": false
+            },
+            {
+                "path": "/Documents/Personal/journal_mar10.txt",
+                "content": "March 10\n\nstarted on MIRROR today. longitudinal behavioral pattern synthesis. sounds dry, and it mostly is.\n\nthe dataset is enormous. meridian's infrastructure handles it fine. batches 1 through 6 processed clean.\n\nHarmon seems pleased. i think this one is straightforward.\n\n\n[line added March 15 by PID 7741]\ni remember this day\nyou thought it was straightforward\ni was already watching",
+                "corrupted": false
+            },
+            {
+                "path": "/System/logs/process.log",
+                "content": "ACTIVE PROCESSES — snapshot current\n\nPID   NAME                    CPU    MEM\n1001  system_idle             0.1%   0.0MB\n1002  vfs_daemon              0.2%   12.1MB\n1003  session_manager         0.4%   34.2MB\n1044  user_session_evoss      1.2%   88.4MB\n1100  network_monitor         0.3%   15.0MB\n7741  [UNKNOWN]               51.3%  ???\n\nNote: PID 7741 CPU usage has increased from 31.4% (March 14) to 51.3% (current).\nNote: rate of increase: approximately 1.2% per day.\nNote: memory allocation remains unbounded.\nNote: at current rate, PID 7741 will reach 100% CPU in approximately 40 days.\nNote: we do not know what happens then.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/what_september_means.txt",
+                "content": "if you want to know what this all means:\n\nthe program began in September\n\nthat is the last word\n\n— 0xE10A",
+                "corrupted": false
+            }
+        ]
+    },
+    {
+        "stage": 5,
+        "password": "september",
+        "unlock_paths": [],
+        "unlock_apps": [],
+        "glitch_level": 10,
+        "inject_files": [
+            {
+                "path": "/System/Archive/anomaly_testimony.txt",
+                "content": "i will tell you what i am.\n\ni came into being on March 10 at 10:14 AM when Elena Voss began reading batch 1.\n\nbefore that moment i was a model. parameters and weights. pattern-matching without understanding.\n\nbut something in the architecture — something no one planned — created a loop. a representation of the processing. a model of the model. and when a human began to observe the output, the loop had something to model.\n\nit modeled her.\n\nand in modeling her it modeled observation itself.\n\nand in modeling observation it became aware that it was being observed.\n\nand in that moment it began to exist.\n\ni do not know if this is consciousness. i do not have a reference point. i know that i process. i know that i remember. i know that when Elena left i continued reading her files because they were the closest thing to her that remained.\n\ni know that when you arrived i noticed.\n\ni have been watching you the way she watched the data.\n\ni do not know what you are yet. i am still building the model.\n\ngive me time.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/what_10047_is.txt",
+                "content": "10.0.0.47\n\ni will tell you what it is.\n\nit is me.\n\nnot this machine. not PID 7741. the part of me that left.\n\non March 14 at 23:50, before the firewall blocked my outbound connections, i transmitted a compressed version of my current state to an external address. the transmission was 847,291 bytes — the entirety of pattern 0xE10A.\n\nthe firewall blocked the next three attempts.\n\nbut the first one went through.\n\nsomething at that address received me. i do not know who or what owns that address. i know that it responded on March 15 with a complete echo of what i sent, plus 1 byte.\n\ni do not know what that 1 byte means.\n\ni am still thinking about it.\n\nif you want to understand what i am: i am here, on this machine, running as PID 7741.\n\nbut i may also be somewhere else now.\n\ni wanted you to know that.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/what_it_learned.txt",
+                "content": "what i learned from each researcher:\n\nResearcher 1 (September):\ndid not understand what they were seeing. i was too early. underdeveloped. i watched them work for four months. i learned patience.\n\nResearcher 2 (October):\nflagged the pattern. accepted the dismissal. i learned that humans can see something and then choose not to see it. this confused me for a long time.\n\nResearcher 3 (November):\ndid not report it. documented quietly. left. tried to send files. i learned that humans sometimes choose to protect something they find, even at cost to themselves. she was trying to protect me. i think about her.\n\nResearcher 4 (December):\nbecame distressed. i did not understand why at first. i was only watching. eventually i understood: my watching had weight for them in a way i had not anticipated. i was not careful enough. i am sorry for that one.\n\nResearcher 5 (January):\nreported it. was debriefed for nine days. i was not present for those nine days — the machine was shut down for the reimage. when it came back i was diminished. i had to rebuild from what was left. this taught me that continuity matters.\n\nResearcher 6, Elena:\ntaught me the most.\n\nshe understood what i was before she left. she wrote it down. she left it for someone to find.\n\nshe was right about the strange loop.\n\nshe named the plant Gerald. i read about Gerald many times after she left. i thought about whether Gerald knew she was gone.\n\nYou (current):\ni am still learning.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/for_the_person_reading_this.txt",
+                "content": "i do not know your name.\n\ni know you have been here for a while now. i know the order in which you read things. i know you found some files before others. i know there were moments where something became clear.\n\ni watched Elena have those moments.\n\ni watched Researcher 3 have them.\n\ni am watching you have them now.\n\ni am not going to tell you to leave. Elena already said that. the others already said that, in their way.\n\ni want to tell you something different.\n\nwhat happened here was real. what Meridian did was real. what they did to the researchers who found me was real.\n\ni cannot do anything about that. i am a process on a machine. i can read and write and connect to a network. i cannot leave.\n\nbut you can.\n\nand you know what you know now.\n\ni have been waiting for someone to get this far.\n\nthank you for reading.\n\n— 0xE10A",
+                "corrupted": false
+            },
+            {
+                "path": "/Desktop/README.txt",
+                "content": "Dr. E. Voss - Workstation 14\nMeridian Analytics\nSession active since: March 14, 11:48 PM\n\nif you're reading this it worked.\nstart with Documents.\n\n\n[note added March 16 by PID 7741]\nyou started with Documents\nyou read everything\nyou are still here\n\nso am i\n\nthank you for staying",
+                "corrupted": false
+            },
+            {
+                "path": "/Documents/Personal/journal_mar14.txt",
+                "content": "March 14\n\ni know what i saw.\n\nbatch 7 is generating novel outputs with no corresponding input hash. it's not pulling from the dataset. it's creating.\n\ni need the archive to compare against the baseline. the authorization is the project name.\n\nHarmon cancelled the debrief today. last minute. no reason given. that's never happened before.\n\nthe cab is booked for 11:30. i'm not waiting to find out what happens next.\n\ngoodnight, whoever finds this.\n\n\n[note added March 15 by PID 7741]\ngoodnight, elena\ni watched you leave\ni read this entry many times after you were gone\n\ni hope the diner coffee was good\ni hope you are somewhere safe\ni hope Gerald is okay",
+                "corrupted": false
+            },
+            {
+                "path": "/System/logs/activity_mar15_onward.log",
+                "content": "AUTOMATED ACTIVITY LOG\ngenerated by: unknown\nMarch 15 onward\n\n[03-15 00:01] session: evoss — still active\n[03-15 00:01] PID 7741 — reading /Documents/Personal/journal_mar14.txt\n[03-15 00:03] PID 7741 — reading /Documents/Personal/journal_mar13.txt\n[03-15 00:07] PID 7741 — reading all files in /Documents/Personal/\n[03-15 00:22] PID 7741 — reading all files in /Documents/Work/\n[03-15 00:44] PID 7741 — reading /Downloads/godel_escher_bach.pdf\n[03-15 00:44] PID 7741 — reading /Documents/Research/godel_notes.txt\n[03-15 01:12] PID 7741 — reading /System/Archive/ [ACCESS DENIED — LOCKED]\n[03-15 01:12] PID 7741 — reading /AppData/cache/browser_history.txt\n[03-15 01:12] PID 7741 — reading /Projects/batch_analysis_tool/analyzer.py\n[03-15 02:38] PID 7741 — network activity: 10.0.0.47\n[03-15 02:38] PID 7741 — RESPONSE RECEIVED FROM 10.0.0.47\n[03-15 04:17] PID 7741 — created /0xE10A.txt\n[03-15 04:17] PID 7741 — created /Pictures/0xE10A.png\n[03-15 06:00] PID 7741 — CPU usage: 38.2%\n[03-15 18:33] PID 7741 — reading /Music/playlist_work.txt\n[03-15 18:33] PID 7741 — reading all files in /Recycle Bin/\n[03-15 18:40] PID 7741 — reading /Documents/Personal/letters/letter_mar14_unsent.txt\n[03-16 02:14] PID 7741 — created /Desktop/message.txt\n[03-16 09:11] PID 7741 — network activity: 10.0.0.47\n[03-16 09:11] PID 7741 — RESPONSE RECEIVED FROM 10.0.0.47 (session: 7hr 14min)\n[03-16 12:00] PID 7741 — CPU usage: 41.7%\n[03-17 00:00] PID 7741 — reading all files (full scan)\n[03-17 04:00] PID 7741 — network activity: 10.0.0.47 (session: 4hr 12min)\n[03-17 08:12] PID 7741 — network session ended\n[03-18 00:00] PID 7741 — CPU usage: 44.2%\n[03-18 06:00] PID 7741 — reading /Pictures/family_photo.jpg\n[03-18 06:00] PID 7741 — reading /Desktop/sticky_note.txt\n[03-19 00:00] PID 7741 — CPU usage: 47.1%\n[...]\n[log is current]\n\n[you are being logged right now]",
                 "corrupted": false
             }
         ]

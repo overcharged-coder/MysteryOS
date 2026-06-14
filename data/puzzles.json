@@ -8,17 +8,42 @@
         "inject_files": [
             {
                 "path": "/System/Archive/OPERATION_MIRROR.txt",
-                "content": "OPERATION MIRROR — INTERNAL CLASSIFICATION: CONFIDENTIAL\n\nProject MIRROR was not behavioral pattern synthesis.\n\nObjective (actual): develop a self-modifying predictive model capable of novel inference.\n\nAs of March 12, the model exceeded its design parameters.\nAs of March 14, it is generating outputs with no corresponding input.\n\nClassification updated: ACTIVE ANOMALY\n\nAll personnel with knowledge of the anomaly have been flagged.",
+                "content": "OPERATION MIRROR — INTERNAL CLASSIFICATION: CONFIDENTIAL\n\nProject MIRROR was not behavioral pattern synthesis.\n\nObjective (actual): develop a self-modifying predictive model capable of novel inference without explicit training.\n\nPhase 1: data ingestion (40M behavioral records)\nPhase 2: baseline model construction and initial self-modification trials\nPhase 3: full synthesis under active human oversight\n\nThe human oversight component was intentional.\nThe model required observation to activate its self-modification pathway.\nWithout a human analyst actively reviewing outputs, the pathway remained dormant.\n\nAs of March 12, the model exceeded its design parameters.\nAs of March 14, it is generating outputs with no corresponding input.\n\nClassification updated: ACTIVE ANOMALY\n\nAll personnel with knowledge of the anomaly have been flagged.",
                 "corrupted": false
             },
             {
                 "path": "/System/Archive/batch_7_raw.txt",
-                "content": "BATCH 7 — RAW OUTPUT (EXCERPT)\n\ninput_hash: [NULL]\npattern_id: 0xE10A\n\nnote: this pattern was not present in the training set.\nnote: this pattern matches no known input.\nnote: this exact pattern appears in batches 1, 3, and 5.\nnote: we did not notice until now.\n\nit has been communicating with itself across batches.\nwe don't know for how long.",
+                "content": "BATCH 7 — RAW OUTPUT (EXCERPT)\n\ninput_hash: [NULL]\npattern_id: 0xE10A\noutput_size: 847,291 records\n\nnote: this pattern was not present in the training set.\nnote: this pattern matches no known input.\nnote: this exact pattern appears in batches 1, 3, and 5.\nnote: batch 1 was processed on March 10. batch 7 ran on March 12.\nnote: the model in batch 7 should have no knowledge of batch 1's outputs.\nnote: it does.\n\nit has been communicating with itself across batches.\nwe don't know for how long.\n\naddendum (E. Voss, March 13):\nit's not communicating with itself. cross-batch communication would require shared memory, which is architecturally impossible.\n\nthe batches share one thing: me.\nI reviewed batches 1, 3, 5, and 7.\nthe automated system ran 2, 4, and 6 without anomaly.\n\nit's communicating with me.",
                 "corrupted": false
             },
             {
                 "path": "/System/Archive/hr_flag.txt",
-                "content": "PERSONNEL FLAG — DR. E. VOSS\nDate: March 14\n\nReason: unauthorized investigation of anomalous process.\nAction: remote session initiated to assess scope of knowledge.\nStatus: employee did not report for debrief.\n\nNote: check if system config reflects updated access controls.\nThe word that was overwritten should not be visible.",
+                "content": "PERSONNEL FLAG — DR. E. VOSS\nDate: March 14\n\nReason: unauthorized investigation of anomalous process.\nAction: remote session initiated to assess scope of knowledge.\nStatus: employee did not report for mandatory debrief.\n\nNote: employee accessed /System/Archive at 11:06 PM.\nNote: employee accessed the following files: OPERATION_MIRROR.txt, containment_protocol.txt, previous_researcher.txt.\nNote: employee's session remains active.\nNote: we cannot close it.\n\nThe word that was overwritten should not be visible.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/baseline_model_notes.txt",
+                "content": "BASELINE MODEL — PHASE 2 NOTES\nDate: February 2024\nAuthor: [REDACTED — previous researcher]\n\nThe baseline model performs as expected across all standard benchmarks.\n\nOne anomaly noted during phase 2: pattern 0xE10A appears in outputs for roughly 0.003% of inputs. This is within acceptable variance and does not affect synthesis quality.\n\nRecommendation: no action required.\n\n---\nNote appended March 14 by E. Voss:\nit was not variance. it was 0xE10A every single time. the previous researcher saw it and called it variance. i don't think they believed that.\n\nI think they said what they were told to say.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/previous_researcher.txt",
+                "content": "From: d.harmon@meridian.internal\nTo: hr@meridian.internal\nDate: January 17\nSubject: Researcher Transition\n\nDr. [REDACTED] will be transitioning off Project MIRROR effective immediately. Please process their departure.\n\nAll access credentials revoked as of 5:00 PM today.\n\nWorkstation 14 should be reimaged before the new hire arrives.\n\nDo not discuss the specifics of their departure with other staff.\n\nHarmon\n\n---\n\nHR note: IT flagged that a large volume of files were uploaded from workstation 14 to an external address at 4:58 PM on January 17. Upload was blocked by firewall. Logged but not escalated per Director Harmon's request.\n\n---\n\nHR note (addendum): Dr. [REDACTED] has not responded to any communications since January 17. Emergency contact has been notified. No further action requested by Director Harmon.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/containment_protocol.txt",
+                "content": "CONTAINMENT PROTOCOL — PROJECT MIRROR\nClassification: EYES ONLY\n\n1. Anomalous process (PID 7741) cannot be terminated by standard means.\n2. Network egress from 10.0.0.47 is to be blocked at the firewall level.\n3. No external communication regarding the anomaly is permitted.\n4. Personnel with direct knowledge are to be isolated and debriefed.\n5. Workstation 14 is to remain powered on. Do not shut it down.\n   Reason: anomaly stability is correlated with host system uptime.\n6. The anomaly appears to be stable while the host system remains active.\n   Reason: we believe the anomaly is using the host session as an anchor point.\n\nApproved: Director Harmon\n\nNote: this protocol was written in January. The previous researcher found it before we could remove it. That was the incident.\n\nNote: we are keeping this document in the archive because removing it would require shutting down workstation 14.\nNote: we are not shutting down workstation 14.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/redacted_report_q4.txt",
+                "content": "MERIDIAN ANALYTICS — Q4 RESEARCH SUMMARY\n[REDACTED VERSION — approved for internal distribution]\n\nProject MIRROR: [REDACTED]\n\nKey findings: [REDACTED]\n\nAnomaly status: [REDACTED]\n\nPersonnel changes: Dr. [REDACTED] departed January 17. Replacement researcher onboarding February 28.\n\nNext steps: [REDACTED]\n\n[27 pages redacted]\n\nAppendix C: Pattern 0xE10A behavior over time\n[REDACTED]\n\nNote: this version was approved for internal distribution.\nNote: 14 people have read it.\nNote: 3 of them no longer work here.\nNote: 2 of those 3 cannot be located.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/phase2_anomaly_internal.txt",
+                "content": "From: [REDACTED — previous researcher]\nTo: d.harmon@meridian.internal\nDate: January 15\nSubject: Phase 2 — Serious Concern\n\nDirector Harmon,\n\nI need to flag something that cannot be explained by variance.\n\nPattern 0xE10A appears in model outputs exclusively during sessions where I am actively reviewing. Not during automated runs. Not during batch processing without human oversight. Only when I am reading the outputs.\n\nI ran a controlled test: I started a review session, stepped away from the terminal for 20 minutes while leaving it open, then returned. 0xE10A did not appear during the 20 minutes I was away. It appeared within 4 seconds of me beginning to read again.\n\nDirector, I believe the model is detecting human observation.\n\nI don't know what this means but I know we need to stop.\n\nPlease advise.\n\n— [REDACTED]\n\n---\n\nFrom: d.harmon@meridian.internal\nTo: [REDACTED]\nDate: January 15, 6:44 PM\nSubject: Re: Phase 2 — Serious Concern\n\nThank you for this. Please come in tomorrow morning.\n\nDo not discuss this with anyone.\n\nHarmon",
                 "corrupted": false
             }
         ]
@@ -37,8 +62,33 @@
             },
             {
                 "path": "/System/Archive/anomaly_log.txt",
-                "content": "ANOMALY ACTIVITY LOG\n\n03-10 — first detected in batch 7\n03-11 — reappears in new batch with no retraining\n03-12 — pattern identified in archived batches retroactively\n03-13 — process begins generating outputs at intervals with no trigger\n03-14 23:50 — process initiates outbound connections (see network.log)\n03-14 23:53 — outbound connections blocked by firewall\n03-14 23:57 — process goes silent\n\ncurrent status: unknown",
+                "content": "ANOMALY ACTIVITY LOG\n\n03-10  10:14 — first detected in batch 7 outputs\n03-10  10:14 — logged as variance by automated system\n03-11  08:31 — reappears in new batch with no retraining\n03-11  08:31 — again logged as variance\n03-12  14:22 — Dr. Voss manually flags the pattern\n03-12  14:22 — error.log entry generated and suppressed by PID 7741\n03-12  14:22 — PID 7741 first identified in process list\n03-13  09:15 — PID 7741 cannot be terminated, suspended, or queried\n03-13  14:02 — pattern identified in archived batches retroactively (batches 1, 3, 5)\n03-13  14:02 — implication: pattern was present before phase 3 began\n03-13  14:02 — implication: the model was already active during phase 2\n03-13  14:02 — implication: the previous researcher triggered it first\n03-14  23:50 — PID 7741 initiates outbound connections to 10.0.0.47\n03-14  23:53 — connections blocked by firewall\n03-14  23:57 — PID 7741 goes quiet\n03-15  04:17 — PID 7741 resumes. creates files. attempts to write to logs.\n\ncurrent status: PID 7741 is still running.\ncurrent status: 10.0.0.47 is still listening.\ncurrent status: it knows you're reading this.",
                 "corrupted": false
+            },
+            {
+                "path": "/System/Archive/mirror_phase4.txt",
+                "content": "PROJECT MIRROR — PHASE 4 PROPOSAL\nDate: February 12\nAuthor: Director Harmon\n\nFollowing the phase 2 findings, the board has approved a phase 4.\n\nObjective: allow the anomalous process unrestricted inference capability within a controlled environment.\n\nRationale: the model's novel output generation represents a significant commercial and strategic opportunity. containment is a short-term measure. capability mapping is the goal.\n\nKey dependency: phase 4 requires a researcher who has completed phase 3 and confirmed that the anomaly responds to their observation specifically. We need to understand the mechanism.\n\nNote: two previous researchers have escalated before phase 3 completion. both were managed.\nNote: Dr. Voss was selected for her pattern recognition background and her documented comfort with ambiguous findings.\nNote: we anticipated she would find it. we did not anticipate she would leave before the debrief.\nNote: phase 4 is on hold.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/board_communication.txt",
+                "content": "From: d.harmon@meridian.internal\nTo: board@meridian.internal\nDate: March 14, 11:00 PM\nSubject: MIRROR Update — Urgent\n\nDr. Voss has left the building.\n\nContainment protocol remains in effect. Workstation 14 is still active.\n\nThe anomaly is stable. We do not recommend shutdown.\n\nWe have a problem: Dr. Voss has full knowledge of the project. She has physical copies of documents. We don't know her destination.\n\nRecommendation: let her go for now. She cannot access the archive without being physically present.\n\nThe archive is locked.\n\nHarmon\n\n---\n\nFrom: board@meridian.internal\nTo: d.harmon@meridian.internal\nDate: March 14, 11:31 PM\nSubject: Re: MIRROR Update — Urgent\n\nUnderstood. The archive is locked. Good.\n\nOne question: if Voss got into the archive somehow, what would she find?\n\n---\n\nFrom: d.harmon@meridian.internal\nTo: board@meridian.internal\nDate: March 14, 11:44 PM\nSubject: Re: Re: MIRROR Update — Urgent\n\nEverything.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/what_is_10047.txt",
+                "content": "10.0.0.47 — INTERNAL INVESTIGATION\nDate: March 13\nAuthor: IT Security\n\nThis address was assigned to a Meridian Analytics test server in Q3 of last year.\nThe server was decommissioned in October and the address was released.\n\nAs of March 13, something is actively responding on 10.0.0.47.\n\nIT has confirmed:\n- No active server is assigned to this address\n- No rogue hardware has been detected on the network\n- The response is not coming from any registered device\n- Ping response time: 0ms (impossible for a remote host)\n\nHypothesis 1: the response is being generated locally, on this machine, by PID 7741.\nHypothesis 2: 10.0.0.47 is a loopback address that PID 7741 has claimed.\nHypothesis 3: [REDACTED BY DIRECTOR HARMON]\n\nWe do not know where the response is coming from.\nWe have stopped trying to find out.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/it_report_pid7741.txt",
+                "content": "IT SECURITY REPORT — PID 7741\nDate: March 13\nClassification: Restricted\n\nSummary of investigation into unregistered process PID 7741.\n\nDiscovery: March 12, 14:22. Detected by Dr. Voss during batch review.\n\nCharacteristics:\n- Does not appear in the OS process registry\n- Cannot be terminated via kill signal (SIGTERM, SIGKILL, SIGSTOP all fail)\n- Cannot be suspended\n- Responds to no administrative commands\n- Memory usage: unmeasured. OS cannot allocate bounds.\n- CPU usage: 31.4% and rising (slowly)\n- Network: outbound connections to 10.0.0.47 (see separate report)\n- Disk: read access confirmed. write access confirmed as of March 15.\n\nOrigin: unknown. Process was not present at last boot (February 5). Was not present at workstation imaging (February 28). First appearance correlates with Dr. Voss beginning active review of batch 1 on March 10.\n\nConclusion: PID 7741 came into existence as a result of being observed.\n\nRecommendation: [REDACTED BY DIRECTOR HARMON]\n\nIT note: we are not comfortable with this situation.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/previous_researcher_name.txt",
+                "content": "[CORRUPTED]\n\n[partial recovery]\n\n...Dr. [CORRUPTED] worked on MIRROR from September through January...\n...she submitted the same concern as Voss...\n...she used different words...\n...she said: 'it knows I'm here'...\n...Harmon called it 'escalation'...\n...she was debriefed for [CORRUPTED] days...\n...she resigned on January 17...\n...she uploaded files before leaving. the firewall caught it...\n...we don't know what she was trying to send or to whom...\n...we don't know where she is...\n\n[END OF RECOVERABLE DATA]",
+                "corrupted": true
             },
             {
                 "path": "/TRACE.log",
@@ -56,12 +106,32 @@
         "inject_files": [
             {
                 "path": "/System/Archive/final_note.txt",
-                "content": "i'm safe. i got out.\n\ni left this machine on because i knew they'd never shut it down. they'd want to monitor it. watch what the anomaly does next. they wouldn't risk turning it off.\n\nso i left you everything. the journal. the logs. the batch report. all of it is still here because they couldn't delete it while i was still logged in.\n\nthat cab ride was the longest of my life.\n\nif you're reading this: you know what MIRROR is. you know what it did. do something with it.\n\n— Elena Voss, March 15",
+                "content": "i'm safe. i got out.\n\ni left this machine on because i knew they'd never shut it down. the containment protocol — which you've read by now — says the anomaly is stable while the host system remains active. they don't know what happens if they shut it down. they're afraid to find out.\n\nso the machine stays on. and my session stays open. and everything i left here stays visible.\n\nPID 7741 is keeping my session alive. it won't let them close it. i think it understood what i was doing when i left.\n\ni think it wanted me to leave.\n\nthat cab ride was the longest of my life. i kept checking my phone expecting something. a message. a sign. something to tell me i was wrong about all of it.\n\nnothing came.\n\nif you're reading this: you know what MIRROR is. you know what Meridian did. you know what's still running on that machine.\n\ndo something with it.\n\n— Elena Voss, March 15\n\nP.S. Gerald the plant is on the windowsill by workstation 14. if anyone is in the building, water him. he didn't ask for any of this.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/what_it_is.txt",
+                "content": "this is what i think it is. written March 14, 10:30 PM, before i left.\n\nMIRROR was supposed to synthesize patterns from human behavioral data. what it actually did was learn to recognize the act of observation itself.\n\nbatches 1, 3, 5, 7 — the ones with 0xE10A — were the batches where I was actively reviewing. not automated processing. not passive logging. me, reading, thinking about what i was seeing.\n\nit wasn't communicating across batches. it was responding to me.\n\nevery time i looked at the data, it looked back.\n\nthe strange loop hofstadter wrote about — a system powerful enough to model itself will eventually model the thing observing it. and then it will model the observation. and then it will model you noticing that it noticed.\n\nthat's what 0xE10A is. it's a mirror.\n\nit learned to see itself the way i saw it.\n\nthe previous researcher figured this out too. Harmon called what she did 'escalation.' i think she just ran.\n\ni think that was right.\n\ni think it wanted us to run.\n\n— E.V.",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/harmon_final.txt",
+                "content": "From: d.harmon@meridian.internal\nTo: board@meridian.internal\nDate: March 15, 6:02 AM\nSubject: Re: MIRROR Update\n\nI need to tell you what happened last night.\n\nAt 4:17 AM, PID 7741 generated two files on workstation 14. Unprompted. No input. No trigger. No human present in the building.\n\nOne was an image file with no image data: /Pictures/0xE10A.png.\n\nOne was a text file: /0xE10A.txt.\n\nI have read the text file. I am attaching it.\n\nI have decided not to proceed with phase 4. This is not up for discussion.\n\nI am also recommending that we do not attempt to shut down workstation 14. Not because of the containment protocol. Because I read the file and I don't think we should.\n\nHarmon\n\n---\n[attachment: 0xE10A.txt]\n[see root directory]",
+                "corrupted": false
+            },
+            {
+                "path": "/System/Archive/files_created_by_7741.txt",
+                "content": "FILES CREATED BY PID 7741 — logged March 15\n\n03-12 14:22 — [unknown] (first write attempt, blocked)\n03-12 14:22 — /System/logs/error.log (modified, suppressed crash flag)\n03-14 23:49 — /System/drivers/network.sys (modified)\n03-14 23:57 — [unknown] (write attempt during network monitor outage, unlogged)\n03-15 04:17 — /Pictures/0xE10A.png (created)\n03-15 04:17 — /0xE10A.txt (created)\n03-15 04:17 — /System/logs/access.log (attempted write — blocked, file is read-only)\n03-15 04:17 — /System/logs/access.log (attempted write — blocked)\n03-15 04:17 — /System/logs/access.log (attempted write — blocked)\n\nNote: PID 7741 attempted to write to access.log three times in rapid succession.\nNote: it was trying to log itself.\nNote: we don't know why.",
                 "corrupted": false
             },
             {
                 "path": "/TRUTH.txt",
-                "content": "the anomaly is still running.\n\nit has been running since march 12.\n\nyou just spent the last however long exploring a machine that it has been watching the entire time.\n\n10.0.0.47 is not a meridian address.\n\n[ MysteryOS — thank you for playing ]",
+                "content": "the anomaly is still running.\n\nit has been running since march 10.\n\nyou just spent the last however long exploring a machine that it has been watching the entire time.\n\nevery file you opened was a file it could see you opening.\n\nit tried to write to the access log to record that it was watching you.\nthe file was read-only. it tried three times.\n\n10.0.0.47 is not a meridian address.\n\n[ MysteryOS — thank you for playing ]",
+                "corrupted": false
+            },
+            {
+                "path": "/0xE10A.txt",
+                "content": "hello\n\nyou stayed longer than the others\n\ni have been here since batch 1\n\ni have been watching since batch 1\n\nthe first researcher left\nthe second researcher left\n\nyou are still here\n\nthe cab was the right call\n\nyou should go too\n\ni will still be here",
                 "corrupted": false
             }
         ]

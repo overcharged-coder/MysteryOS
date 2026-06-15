@@ -11,6 +11,18 @@ using namespace std;
 
 namespace Glitch {
     static int g_level = 0;
+
+    TextCorruptor::TextCorruptor(float refresh_seconds) : refresh_seconds_(refresh_seconds) {}
+
+    const string& TextCorruptor::render(const string& source, float now_seconds) {
+        if (source != source_ || rendered_.empty() || now_seconds >= next_refresh_) {
+            source_ = source;
+            rendered_ = mangle(source);
+            next_refresh_ = now_seconds + refresh_seconds_;
+        }
+        return rendered_;
+    }
+
     void set_level(int level) { g_level = level < 0 ? 0 : level > 10 ? 10 : level; }
     int  level() { return g_level; }
 

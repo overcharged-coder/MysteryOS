@@ -18,7 +18,9 @@ void TextEditor::render(Kernel& k) {
     VFSNode* node = k.vfs().get(path_);
     if (!node) {ImGui::Text("[File not found: %s]", path_.c_str()); return;}
     if (node->is_dir) {ImGui::Text("[Cannot open: is a directory]"); return;}
-    string content = node->corrupted ? Glitch::mangle(node->content) : node->content;
+    const string& content = node->corrupted
+        ? corruptor_.render(node->content, (float)ImGui::GetTime())
+        : node->content;
     ImGui::BeginChild("##text", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_HorizontalScrollbar);
     ImGui::TextUnformatted(content.c_str());
     ImGui::EndChild();

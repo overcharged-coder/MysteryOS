@@ -67,6 +67,15 @@ int main() {
     (void)Glitch::mangle("corrupted render should not reseed the OS glitch clock");
     if (expect(rand() == expected_next_rand, "mangle should not disturb global rand state")) return 1;
 
+    Glitch::TextCorruptor corruptor(0.25f);
+    Glitch::set_level(10);
+    std::string corruption_source(400, 'A');
+    std::string first_corruption = corruptor.render(corruption_source, 1.0f);
+    std::string same_frame_corruption = corruptor.render(corruption_source, 1.1f);
+    if (expect(first_corruption == same_frame_corruption, "corrupted text should be cached between refresh ticks")) return 1;
+    std::string refreshed_corruption = corruptor.render(corruption_source, 1.4f);
+    if (expect(refreshed_corruption != first_corruption, "corrupted text should refresh after its own timer")) return 1;
+
     std::printf("All tests passed.\n");
     return 0;
 }

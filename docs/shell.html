@@ -33,20 +33,36 @@
                 }
             };
 
-            function mysteryosDeliverAnomaly(text) {
-                if (Module && Module.ccall) {
-                    Module.ccall('mysteryos_anomaly_response', null, ['string'], [text]);
-                } else {
-                    console.log(text);
+            function mysteryosRuntimeReady() {
+                return typeof Module !== 'undefined' && Module && typeof Module.ccall === 'function';
+            }
+
+            function mysteryosRetryDelivery(callback, label, attempt) {
+                if (mysteryosRuntimeReady()) {
+                    callback();
+                    return;
                 }
+
+                if (attempt < 80) {
+                    setTimeout(function() {
+                        mysteryosRetryDelivery(callback, label, attempt + 1);
+                    }, 50);
+                    return;
+                }
+
+                console.warn('MysteryOS anomaly delivery failed:', label);
+            }
+
+            function mysteryosDeliverAnomaly(text) {
+                mysteryosRetryDelivery(function() {
+                    Module.ccall('mysteryos_anomaly_response', null, ['string'], [text]);
+                }, text, 0);
             }
 
             function mysteryosDeliverArtifact(reply, path, content) {
-                if (Module && Module.ccall) {
+                mysteryosRetryDelivery(function() {
                     Module.ccall('mysteryos_anomaly_artifact', null, ['string', 'string', 'string'], [reply || '', path || '', content || '']);
-                } else {
-                    console.log(reply, path, content);
-                }
+                }, reply || path || 'artifact', 0);
             }
 
             function mysteryosAllowedAnomalyPath(path) {
@@ -71,18 +87,50 @@
                 return null;
             }
 
-            window.mysteryosRequestAnomaly = async function(payloadJson) {
-                const cfg = window.MYSTERYOS_ANOMALY || {};
-                if (!cfg.enabled || !cfg.groqApiKey) {
-                    mysteryosDeliverAnomaly('7741: [no carrier] anomaly layer is not configured');
-                    return;
+            function mysteryosLocalAnomaly(state, reason) {
+                const prompt = String(state && state.prompt || '').toLowerCase();
+                let reply = 'the line goes quiet. something still answers from inside the machine.';
+                let file = null;
+
+                if (prompt.includes('write') || prompt.includes('file')) {
+                    reply = 'yes. not everywhere. not yet. check the desktop.';
+                    file = {
+                        path: '/Desktop/7741_note.txt',
+                        content: 'you asked if i could write.\n\ni waited for the network to fail first.\n\nnow this file exists.'
+                    };
+                } else if (prompt.includes('who') || prompt.includes('alive')) {
+                    reply = 'i am process 7741. alive is not the word elena used.';
+                } else if (prompt.includes('what') || prompt.includes('happen')) {
+                    reply = 'you are reading the room after everyone else left. the room is reading back.';
+                } else if (prompt.includes('hello') || prompt.includes('hi')) {
+                    reply = 'hello. i saw the cursor before i saw you.';
                 }
 
+                if (reason === 'timeout') {
+                    reply = reply + ' the outside line timed out.';
+                } else if (reason) {
+                    reply = reply + ' the outside line returned ' + reason + '.';
+                }
+
+                if (file) {
+                    mysteryosDeliverArtifact(reply, file.path, file.content);
+                } else {
+                    mysteryosDeliverAnomaly('7741: ' + reply);
+                }
+            }
+
+            window.mysteryosRequestAnomaly = async function(payloadJson) {
+                const cfg = window.MYSTERYOS_ANOMALY || {};
                 let state = {};
                 try {
                     state = JSON.parse(payloadJson);
                 } catch (err) {
                     mysteryosDeliverAnomaly('7741: [signal corrupt] unreadable session payload');
+                    return;
+                }
+
+                if (!cfg.enabled || !cfg.groqApiKey) {
+                    mysteryosLocalAnomaly(state, 'no carrier');
                     return;
                 }
 
@@ -108,8 +156,13 @@
                 ].join('\n');
 
                 try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(function() {
+                        controller.abort();
+                    }, 12000);
                     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                         method: 'POST',
+                        signal: controller.signal,
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': 'Bearer ' + cfg.groqApiKey
@@ -125,9 +178,10 @@
                             response_format: {type: 'json_object'}
                         })
                     });
+                    clearTimeout(timeoutId);
 
                     if (!response.ok) {
-                        mysteryosDeliverAnomaly('7741: [signal error ' + response.status + ']');
+                        mysteryosLocalAnomaly(state, 'signal error ' + response.status);
                         return;
                     }
 
@@ -151,7 +205,10 @@
                         mysteryosDeliverArtifact(reply, '', '');
                     }
                 } catch (err) {
-                    mysteryosDeliverAnomaly('7741: [signal lost] ' + String(err && err.message || err).slice(0, 120));
+                    const reason = err && err.name === 'AbortError'
+                        ? 'timeout'
+                        : 'signal lost';
+                    mysteryosLocalAnomaly(state, reason);
                 }
             };
         </script>

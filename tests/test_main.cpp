@@ -1,7 +1,9 @@
 #include "kernel/puzzle.h"
 #include "kernel/vfs.h"
 #include "apps/terminal_tools.h"
+#include "fx/glitch.h"
 #include <algorithm>
+#include <cstdlib>
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -57,6 +59,13 @@ int main() {
     auto timeline_lines = TerminalTools::timeline(vfs, "/Desktop");
     if (expect(has_line_containing(timeline_lines, "/Desktop/search_alpha.txt: September 1 happened"), "timeline should surface month/date evidence")) return 1;
     if (expect(!has_line_containing(timeline_lines, "/Desktop/no_date.txt"), "timeline should not treat modal may as a date")) return 1;
+
+    srand(12345);
+    int expected_next_rand = rand();
+    srand(12345);
+    Glitch::set_level(5);
+    (void)Glitch::mangle("corrupted render should not reseed the OS glitch clock");
+    if (expect(rand() == expected_next_rand, "mangle should not disturb global rand state")) return 1;
 
     std::printf("All tests passed.\n");
     return 0;

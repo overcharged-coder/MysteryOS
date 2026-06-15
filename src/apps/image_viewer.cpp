@@ -7,8 +7,8 @@
 #include <SDL2/SDL_opengles2.h>
 #include <vector>
 #include <algorithm>
-#include <cstdlib>
 #include <ctime>
+#include <random>
 
 using namespace std;
 
@@ -30,9 +30,12 @@ const char* ImageViewer::title() const { return title_.c_str(); }
 void ImageViewer::gen_glitch(bool is_anomaly) {
     tex_w_ = 512; tex_h_ = 384;
     vector<unsigned char> pixels(tex_w_ * tex_h_ * 4);
-    srand(is_anomaly ? 0xE10A : (unsigned)time(nullptr));
+    static unsigned texture_seed = 0;
+    unsigned seed = is_anomaly ? 0xE10A : ((unsigned)time(nullptr) ^ (++texture_seed * 0x7741u));
+    mt19937 rng(seed);
+    uniform_int_distribution<int> byte_pick(0, 254);
     for (int i = 0; i < tex_w_ * tex_h_; i++) {
-        unsigned char v = rand() % 255;
+        unsigned char v = (unsigned char)byte_pick(rng);
         pixels[i*4+0] = is_anomaly ? 0       : v / 4;
         pixels[i*4+1] = is_anomaly ? v       : v / 4;
         pixels[i*4+2] = is_anomaly ? 0       : v / 4;

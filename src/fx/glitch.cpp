@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <random>
 #ifndef MYSTERYOS_TEST
 #include "imgui.h"
 #endif
@@ -19,9 +20,11 @@ namespace Glitch {
         const int noise_len = (int)strlen(noise);
         float rate = g_level * 0.05f;
         string out = text;
-        srand((unsigned)time(nullptr));
+        static mt19937 rng((unsigned)time(nullptr) ^ 0x7741u);
+        uniform_real_distribution<float> chance(0.0f, 1.0f);
+        uniform_int_distribution<int> noise_pick(0, noise_len - 1);
         for (char& c : out)
-            if (c != '\n' && (rand() / (float)RAND_MAX) < rate) c = noise[rand() % noise_len];
+            if (c != '\n' && chance(rng) < rate) c = noise[noise_pick(rng)];
         return out;
     }
 

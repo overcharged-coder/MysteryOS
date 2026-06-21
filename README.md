@@ -49,7 +49,7 @@ The main interaction is reading. You open documents, inspect logs, follow hints,
 - Session Monitor app for investigating PID 7741
 - Activity tracking for files opened during the current session
 - Behavior-aware late-game files that react to rereads, searches, deleted-file reads, and terminal-heavy play
-- Full-screen scare events, generated audio stingers, phantom file entries, and delayed anomaly whispers
+- Full-screen scare events tied to specific late-game evidence files, generated audio stingers, phantom file entries, and delayed anomaly whispers
 - Optional Groq-powered `talk 7741` anomaly
 - Optional AI-generated files written into the fake filesystem
 

@@ -57,21 +57,41 @@ void ScareDirector::on_file_open(const string& path, int stage, bool corrupted, 
         request_sound(ScareSound::Impact);
     }
 
-    if (stage >= 4 && starts_with(path, "/Users/") && !scene_feed_triggered_) {
+    if (stage >= 4 && path == "/Users/mkato/Desktop/observation_log.txt" && !scene_feed_triggered_) {
         scene_feed_triggered_ = true;
         add(ScareKind::SceneFeed, now, 20.0f, 1.0f);
-    }
-
-    if (stage >= 4 && starts_with(path, "/Users/") && !saw_users_) {
-        saw_users_ = true;
         add(ScareKind::FakeError, now + 20.5f, 2.4f, 1.0f, "CROSS-CONTAMINATION ACCELERATING");
         add(ScareKind::WindowShake, now + 20.5f, 1.0f, 0.8f);
         request_sound(ScareSound::Dread);
     }
 
-    if (stage >= 4 && starts_with(path, "/Users/") && !hallway_triggered_) {
+    if (stage >= 4 && path == "/Users/mkato/Documents/what_it_feels_like.txt" && !hallway_triggered_) {
         hallway_triggered_ = true;
-        add(ScareKind::Hallway, now + 23.2f, 4.5f, 1.0f);
+        add(ScareKind::Hallway, now, 4.5f, 1.0f);
+        request_sound(ScareSound::Dread);
+    }
+
+    if (stage >= 4 && path == "/Users/dbowers/Desktop/false_memory_01.txt" && !false_memory_triggered_) {
+        false_memory_triggered_ = true;
+        add(ScareKind::DepthWarp, now, 3.0f, 1.0f);
+    }
+
+    if (stage >= 4 && path == "/Users/arenard/AppData/logs/camera_checks.log" && !camera_checks_triggered_) {
+        camera_checks_triggered_ = true;
+        add(ScareKind::TheEye, now, 4.0f, 1.0f);
+        request_sound(ScareSound::Dread);
+    }
+
+    if (stage >= 4 && path == "/Users/cshin/Documents/response_1byte.bin" && !one_byte_triggered_) {
+        one_byte_triggered_ = true;
+        add(ScareKind::BlackFlash, now, 0.18f, 1.0f);
+        add(ScareKind::HardJumpscare, now + 0.2f, 1.8f, 1.0f, "THE ANSWER IS WAITING");
+        request_sound(ScareSound::Impact);
+    }
+
+    if (stage >= 4 && starts_with(path, "/Users/") && !saw_users_) {
+        saw_users_ = true;
+        add(ScareKind::GreenAfterimage, now, 0.45f, 0.4f);
         request_sound(ScareSound::Dread);
     }
 

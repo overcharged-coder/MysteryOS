@@ -76,6 +76,9 @@ class ScareDirector {
         bool scene_interview_launched_ = false;
         bool scene_walk_triggered_ = false;
         bool scene_walk_launched_ = false;
+        bool false_memory_triggered_ = false;
+        bool camera_checks_triggered_ = false;
+        bool one_byte_triggered_ = false;
 
         bool stage4_unlock_hit_ = false;
         bool stage5_unlock_hit_ = false;

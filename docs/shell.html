@@ -875,9 +875,10 @@
         <div id="_mey_overlay"><canvas id="_mey_canvas"></canvas></div>
         <script>
             window._mysteryTheEye = function() {
+                console.log('[MysteryOS] TheEye triggered');
                 var overlay = document.getElementById('_mey_overlay');
                 var c = document.getElementById('_mey_canvas');
-                if (!overlay || !c) return;
+                if (!overlay || !c) { console.warn('[MysteryOS] TheEye: overlay elements not found'); return; }
 
                 c.width = window.innerWidth;
                 c.height = window.innerHeight;
@@ -1007,32 +1008,15 @@
 
                     ctx2d.restore(); // end sclera clip
 
-                    // Eyelid edges
-                    ctx2d.strokeStyle = 'rgba(60,30,20,0.9)';
-                    ctx2d.lineWidth = 3;
+                    // Eyelid edges — thick fleshy outline
+                    ctx2d.strokeStyle = 'rgba(90,30,20,0.95)';
+                    ctx2d.lineWidth = 5 + lidOpen * 3;
+                    ctx2d.shadowColor = 'rgba(60,0,0,0.6)';
+                    ctx2d.shadowBlur = 15;
                     ctx2d.beginPath();
                     ctx2d.ellipse(0, 0, eyeW / 2, eyeH / 2, 0, 0, Math.PI * 2);
                     ctx2d.stroke();
-
-                    // Upper/lower eyelid skin (covers the clipped area edges)
-                    var skinColor = '#1a1008';
-                    ctx2d.fillStyle = skinColor;
-                    // Upper lid
-                    ctx2d.beginPath();
-                    ctx2d.moveTo(-eyeW, 0);
-                    ctx2d.lineTo(-eyeW, -eyeH * 1.5);
-                    ctx2d.lineTo(eyeW, -eyeH * 1.5);
-                    ctx2d.lineTo(eyeW, 0);
-                    ctx2d.ellipse(0, 0, eyeW / 2, eyeH / 2, 0, Math.PI, 0, true);
-                    ctx2d.fill();
-                    // Lower lid
-                    ctx2d.beginPath();
-                    ctx2d.moveTo(-eyeW, 0);
-                    ctx2d.lineTo(-eyeW, eyeH * 1.5);
-                    ctx2d.lineTo(eyeW, eyeH * 1.5);
-                    ctx2d.lineTo(eyeW, 0);
-                    ctx2d.ellipse(0, 0, eyeW / 2, eyeH / 2, 0, 0, Math.PI, true);
-                    ctx2d.fill();
+                    ctx2d.shadowBlur = 0;
 
                     ctx2d.restore();
 

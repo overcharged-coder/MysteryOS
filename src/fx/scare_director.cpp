@@ -182,7 +182,7 @@ void ScareDirector::on_stage_unlock(int stage, float now) {
 
     if (stage >= 5 && !scene_walk_triggered_) {
         scene_walk_triggered_ = true;
-        add(ScareKind::SceneWalk, now + 3.0f, 13.0f, 1.0f);
+        add(ScareKind::SceneWalk, now + 3.0f, 14.0f, 1.0f);
     }
 }
 

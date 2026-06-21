@@ -464,6 +464,148 @@
                 noiseNode.start(t); noiseNode.stop(t + 0.6);
             }
         </script>
+        <style>
+            @keyframes _msm_drip {
+                0%   { transform: scaleY(1) translateY(0); filter: blur(0px); }
+                30%  { transform: scaleY(1.02) translateY(8px); filter: blur(0.5px); }
+                60%  { transform: scaleY(1.15) translateY(40px); filter: blur(2px); }
+                85%  { transform: scaleY(1.4) translateY(120px); filter: blur(4px); }
+                100% { transform: scaleY(2.0) translateY(280px); filter: blur(8px); opacity: 0; }
+            }
+            @keyframes _msm_col_drip {
+                0%   { transform: translateY(0); opacity: 0.7; }
+                100% { transform: translateY(110vh); opacity: 0; }
+            }
+            @keyframes _msm_overlay_in {
+                0%   { opacity: 0; }
+                100% { opacity: 1; }
+            }
+            #_msm_overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 99998;
+                pointer-events: none;
+                overflow: hidden;
+            }
+            #_msm_overlay.active { display: block; }
+            ._msm_drip_col {
+                position: absolute;
+                top: -10%;
+                width: 6px;
+                background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,40,0,0.6), transparent);
+                border-radius: 0 0 3px 3px;
+                animation: _msm_col_drip 3.5s ease-in forwards;
+            }
+            #_msm_fog {
+                position: absolute;
+                inset: 0;
+                background: #000;
+                opacity: 0;
+                animation: _msm_overlay_in 3.5s ease-in forwards;
+            }
+        </style>
+        <div id="_msm_overlay">
+            <div id="_msm_fog"></div>
+        </div>
+        <script>
+            window._mysteryScreenMelt = function() {
+                var overlay = document.getElementById('_msm_overlay');
+                var canvas = document.getElementById('canvas');
+                if (!overlay || !canvas) return;
+
+                // Clear old drip columns
+                var old = overlay.querySelectorAll('._msm_drip_col');
+                for (var i = 0; i < old.length; i++) old[i].remove();
+
+                // Create drip columns across the screen
+                var w = window.innerWidth;
+                for (var i = 0; i < 80; i++) {
+                    var col = document.createElement('div');
+                    col.className = '_msm_drip_col';
+                    col.style.left = (Math.random() * w) + 'px';
+                    col.style.width = (3 + Math.random() * 14) + 'px';
+                    col.style.height = (30 + Math.random() * 60) + '%';
+                    col.style.animationDelay = (Math.random() * 1.2) + 's';
+                    col.style.animationDuration = (2.0 + Math.random() * 2.0) + 's';
+                    overlay.appendChild(col);
+                }
+
+                overlay.className = 'active';
+
+                // Apply melt transform to the actual game canvas
+                canvas.style.transformOrigin = 'top center';
+                canvas.style.animation = '_msm_drip 3.5s ease-in forwards';
+
+                // Melt audio — low descending tone like reality sinking
+                _mysteryMeltAudio();
+
+                // Clean up
+                setTimeout(function() {
+                    overlay.className = '';
+                    canvas.style.animation = '';
+                    canvas.style.transform = '';
+                    canvas.style.filter = '';
+                    canvas.style.opacity = '';
+                    var cols = overlay.querySelectorAll('._msm_drip_col');
+                    for (var i = 0; i < cols.length; i++) cols[i].remove();
+                }, 3500);
+            };
+
+            function _mysteryMeltAudio() {
+                var base = window._mysteryOsc && window._mysteryOsc.ctx;
+                var ctx = base || new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume();
+                var t = ctx.currentTime;
+
+                // Descending tone — like something heavy sinking
+                var osc = ctx.createOscillator();
+                var g = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(220, t);
+                osc.frequency.exponentialRampToValueAtTime(18, t + 3.4);
+                g.gain.setValueAtTime(0, t);
+                g.gain.linearRampToValueAtTime(0.3, t + 0.3);
+                g.gain.setValueAtTime(0.3, t + 2.8);
+                g.gain.exponentialRampToValueAtTime(0.001, t + 3.4);
+                osc.connect(g); g.connect(ctx.destination);
+                osc.start(t); osc.stop(t + 3.5);
+
+                // Wet dripping noise
+                for (var i = 0; i < 6; i++) {
+                    var drip = ctx.createOscillator();
+                    var dg = ctx.createGain();
+                    var df = ctx.createBiquadFilter();
+                    drip.type = 'sine';
+                    var start = t + 0.4 + i * 0.45;
+                    var freq = 800 + Math.random() * 600;
+                    drip.frequency.setValueAtTime(freq, start);
+                    drip.frequency.exponentialRampToValueAtTime(freq * 0.2, start + 0.15);
+                    df.type = 'bandpass'; df.frequency.value = freq * 0.6; df.Q.value = 12;
+                    dg.gain.setValueAtTime(0.15, start);
+                    dg.gain.exponentialRampToValueAtTime(0.001, start + 0.18);
+                    drip.connect(df); df.connect(dg); dg.connect(ctx.destination);
+                    drip.start(start); drip.stop(start + 0.2);
+                }
+
+                // Low rumble underneath
+                var bufLen = Math.floor(ctx.sampleRate * 3.0);
+                var noiseBuf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+                var nd = noiseBuf.getChannelData(0);
+                for (var i = 0; i < bufLen; i++) nd[i] = Math.random() * 2 - 1;
+                var ns = ctx.createBufferSource();
+                ns.buffer = noiseBuf;
+                var nf = ctx.createBiquadFilter();
+                var ng = ctx.createGain();
+                nf.type = 'lowpass'; nf.frequency.value = 80;
+                ng.gain.setValueAtTime(0, t);
+                ng.gain.linearRampToValueAtTime(0.25, t + 1.0);
+                ng.gain.setValueAtTime(0.25, t + 2.5);
+                ng.gain.exponentialRampToValueAtTime(0.001, t + 3.4);
+                ns.connect(nf); nf.connect(ng); ng.connect(ctx.destination);
+                ns.start(t); ns.stop(t + 3.5);
+            }
+        </script>
         {{{ SCRIPT }}}
     </body>
 </html>

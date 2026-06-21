@@ -84,7 +84,9 @@ void ScareDirector::on_file_open(const string& path, int stage, bool corrupted, 
 
     if (stage >= 5 && path == "/Desktop/you/a_door_you_did_not_open.txt" && !saw_stage5_door_file_) {
         saw_stage5_door_file_ = true;
-        add(ScareKind::HardJumpscare, now, 2.0f, 1.0f, "IT OPENED BACK");
+        add(ScareKind::ScreenMelt, now, 3.5f, 1.0f);
+        add(ScareKind::HardJumpscare, now + 3.0f, 2.0f, 1.0f, "IT OPENED BACK");
+        request_sound(ScareSound::Dread);
         request_sound(ScareSound::Impact);
     }
 
@@ -291,6 +293,22 @@ void ScareDirector::render(float now) {
                 float h = 1.0f + (i % 4);
                 int a = (int)((40.0f + (i % 3) * 20.0f) * fade);
                 dl->AddRectFilled({0, y}, {disp.x, y + h}, IM_COL32(255, 255, 255, a));
+            }
+        } else if (scare.kind == ScareKind::ScreenMelt) {
+            if (!melt_launched_) {
+                melt_launched_ = true;
+                emscripten_run_script("window._mysteryScreenMelt && window._mysteryScreenMelt()");
+            }
+            int drip_alpha = (int)(60.0f * t * scare.intensity);
+            for (int i = 0; i < 24; i++) {
+                float x = fmodf(i * 57.0f + now * 3.0f, disp.x);
+                float drop_h = disp.y * t * (0.4f + (i % 5) * 0.15f);
+                float w = 8.0f + (i % 4) * 12.0f;
+                dl->AddRectFilled({x, 0}, {x + w, drop_h}, IM_COL32(0, 0, 0, drip_alpha));
+            }
+            if (t > 0.6f) {
+                int fog = (int)(180.0f * (t - 0.6f) * 2.5f * scare.intensity);
+                dl->AddRectFilled({0, 0}, disp, IM_COL32(0, 0, 0, fog > 255 ? 255 : fog));
             }
         }
     }

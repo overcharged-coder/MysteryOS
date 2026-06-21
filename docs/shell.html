@@ -1514,390 +1514,252 @@
             };
         </script>
 
-        <!-- SCENE: THE WALK — first-person corridor, mirror at the end -->
+        <!-- SCENE: THE WALK — figure approaches (video), then the head of eyes -->
         <style>
-            #_msw_overlay { display:none; position:fixed; inset:0; z-index:99999; pointer-events:none; background:#000; }
+            #_msw_overlay { display:none; position:fixed; inset:0; z-index:99999; pointer-events:none; background:#000; overflow:hidden; }
             #_msw_overlay.active { display:block; }
-            #_msw_canvas { width:100%; height:100%; }
+            #_msw_walls { position:absolute; inset:0; width:100%; height:100%; }
+            .msw_vid {
+                position:absolute; top:50%; left:50%;
+                height:100%; max-width:100%;
+                transform:translate(-50%,-50%);
+                object-fit:contain; display:none;
+                will-change:transform,filter;
+            }
+            .msw_vid.show { display:block; }
+            /* soft glitch for the walk */
+            @keyframes _msw_soft {
+                0%   { transform:translate(-50%,-50%) translate(0,0);
+                       filter:drop-shadow(2px 0 0 rgba(255,0,0,.45)) drop-shadow(-2px 0 0 rgba(0,255,255,.45)) contrast(1.25) saturate(1.2); }
+                33%  { transform:translate(-50%,-50%) translate(-2px,1px);
+                       filter:drop-shadow(3px 0 0 rgba(255,0,0,.5)) drop-shadow(-3px 0 0 rgba(0,255,255,.5)) contrast(1.4) hue-rotate(-12deg) saturate(1.3); }
+                66%  { transform:translate(-50%,-50%) translate(2px,-1px);
+                       filter:drop-shadow(-2px 0 0 rgba(255,0,0,.5)) drop-shadow(2px 0 0 rgba(0,255,255,.5)) contrast(1.3) hue-rotate(8deg); }
+                100% { transform:translate(-50%,-50%) translate(0,0);
+                       filter:drop-shadow(2px 0 0 rgba(255,0,0,.45)) drop-shadow(-2px 0 0 rgba(0,255,255,.45)) contrast(1.25) saturate(1.2); }
+            }
+            #_msw_walk_vid.show { animation:_msw_soft 0.32s infinite steps(3); }
+            /* heavy glitch for the eyes */
+            @keyframes _msw_hard {
+                0%   { transform:translate(-50%,-50%) translate(0,0) scale(1.0);
+                       filter:drop-shadow(5px 0 0 rgba(255,0,0,.7)) drop-shadow(-5px 0 0 rgba(0,255,255,.7)) contrast(1.8) saturate(1.8); }
+                18%  { transform:translate(-50%,-50%) translate(7px,-4px) scale(1.03);
+                       filter:drop-shadow(-9px 0 0 rgba(255,0,0,.75)) drop-shadow(9px 0 0 rgba(0,255,255,.75)) contrast(2.3) hue-rotate(45deg) saturate(2); }
+                37%  { transform:translate(-50%,-50%) translate(-8px,5px) scale(1.01);
+                       filter:drop-shadow(8px 0 0 rgba(255,0,0,.75)) drop-shadow(-8px 0 0 rgba(0,255,255,.75)) contrast(2) hue-rotate(-50deg); }
+                55%  { transform:translate(-50%,-50%) translate(5px,6px) scale(1.05);
+                       filter:drop-shadow(-12px 0 0 rgba(255,0,0,.8)) drop-shadow(12px 0 0 rgba(0,255,255,.8)) contrast(2.4) hue-rotate(90deg) saturate(2.2); }
+                78%  { transform:translate(-50%,-50%) translate(-6px,-5px) scale(1.02);
+                       filter:drop-shadow(10px 0 0 rgba(255,0,0,.8)) drop-shadow(-10px 0 0 rgba(0,255,255,.8)) contrast(2.1) hue-rotate(-30deg); }
+                100% { transform:translate(-50%,-50%) translate(0,0) scale(1.0);
+                       filter:drop-shadow(5px 0 0 rgba(255,0,0,.7)) drop-shadow(-5px 0 0 rgba(0,255,255,.7)) contrast(1.9) saturate(1.9); }
+            }
+            #_msw_eyes_vid.show { animation:_msw_hard 0.18s infinite steps(2); }
+            #_msw_glitch {
+                position:absolute; inset:0; pointer-events:none;
+                background:
+                    repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.28) 2px 4px);
+                mix-blend-mode:multiply;
+            }
+            #_msw_noise {
+                position:absolute; inset:-50%; width:200%; height:200%; pointer-events:none;
+                opacity:0.07;
+                background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)'/%3E%3C/svg%3E");
+                animation:_msw_noisemove 0.12s infinite steps(3);
+            }
+            @keyframes _msw_noisemove {
+                0%{background-position:0 0} 33%{background-position:-30% 40%}
+                66%{background-position:55% -25%} 100%{background-position:18% -38%}
+            }
+            #_msw_overlay.hard #_msw_glitch { background:repeating-linear-gradient(transparent 0 1px, rgba(0,0,0,.4) 1px 3px); }
+            #_msw_overlay.hard #_msw_noise { opacity:0.16; }
+            #_msw_flash {
+                position:absolute; inset:0; pointer-events:none; background:#fff; opacity:0;
+            }
         </style>
-        <div id="_msw_overlay"><canvas id="_msw_canvas"></canvas></div>
+        <div id="_msw_overlay">
+            <canvas id="_msw_walls"></canvas>
+            <video id="_msw_walk_vid" class="msw_vid" muted playsinline preload="auto"></video>
+            <video id="_msw_eyes_vid" class="msw_vid" muted playsinline preload="auto"></video>
+            <div id="_msw_glitch"></div>
+            <div id="_msw_noise"></div>
+            <div id="_msw_flash"></div>
+        </div>
         <script>
+            function _mswLoadVideo(el, path, fallback) {
+                try {
+                    var data = Module.FS.readFile(path);
+                    var blob = new Blob([data], {type:'video/mp4'});
+                    el._url = URL.createObjectURL(blob);
+                    el.src = el._url;
+                } catch (e) {
+                    el.src = fallback;
+                }
+            }
             window._mysterySceneWalk = function() {
                 var overlay = document.getElementById('_msw_overlay');
-                var c = document.getElementById('_msw_canvas');
-                if (!overlay || !c) return;
-                c.width = window.innerWidth; c.height = window.innerHeight;
+                var walls = document.getElementById('_msw_walls');
+                var walkVid = document.getElementById('_msw_walk_vid');
+                var eyesVid = document.getElementById('_msw_eyes_vid');
+                var flash = document.getElementById('_msw_flash');
+                if (!overlay || !walkVid || !eyesVid) return;
+
+                walls.width = window.innerWidth; walls.height = window.innerHeight;
                 overlay.className = 'active';
-                var ctx = c.getContext('2d');
-                var w = c.width, h = c.height;
-                var start = performance.now();
-                var dur = 30000;
+                walkVid.className = 'msw_vid'; eyesVid.className = 'msw_vid';
 
-                var doorLabels = [
-                    '/System/Archive/classified.txt',
-                    '/Users/evoss/session.log',
-                    '/Pictures/0xE10A.png',
-                    '/System/models/7741.bin',
-                    '/.deleted/elena_final_note.txt',
-                    '/Desktop/you/',
-                    '', '', ''
-                ];
+                _mswLoadVideo(walkVid, '/data/figure_walking.mp4', 'data/figure_walking.mp4');
+                _mswLoadVideo(eyesVid, '/data/eyes_head.mp4', 'data/eyes_head.mp4');
 
-                // Audio
+                // ---- side walls + doors filling the widescreen gaps ----
+                var wctx = walls.getContext('2d');
+                var W = walls.width, H = walls.height;
+                var vidSize = H;                       // square video drawn at height = screen height
+                var gapL = (W - vidSize) / 2;          // left gap width
+                var gapR = gapL;
+                var wallStart = performance.now();
+                var doorPaths = ['/Users/', '/System/', '/.deleted/', '/Desktop/you/'];
+                var wallsRunning = true;
+                function drawWalls(ts) {
+                    if (!wallsRunning) return;
+                    var el = ts - wallStart;
+                    wctx.clearRect(0, 0, W, H);
+                    wctx.fillStyle = '#070707'; wctx.fillRect(0, 0, W, H);
+                    // converging wall gradient on each side
+                    [{x0:0,x1:gapL,dir:1},{x0:W-gapR,x1:W,dir:-1}].forEach(function(g, gi){
+                        if (g.x1 - g.x0 <= 2) return;
+                        var grad = wctx.createLinearGradient(g.dir>0?g.x0:g.x1, 0, g.dir>0?g.x1:g.x0, 0);
+                        grad.addColorStop(0, '#0d110d'); grad.addColorStop(1, '#1a201a');
+                        wctx.fillStyle = grad; wctx.fillRect(g.x0, 0, g.x1-g.x0, H);
+                        // panel lines receding toward center
+                        wctx.strokeStyle = 'rgba(45,60,45,0.35)'; wctx.lineWidth = 1;
+                        for (var i=1;i<8;i++){
+                            var yy = H*(i/8);
+                            wctx.beginPath();
+                            wctx.moveTo(g.dir>0?g.x0:g.x1, yy);
+                            wctx.lineTo(g.dir>0?g.x1:g.x0, H*0.5 + (yy-H*0.5)*0.25);
+                            wctx.stroke();
+                        }
+                        // a door on this side
+                        var doorW = (g.x1-g.x0)*0.4, doorH = H*0.4;
+                        var doorX = g.dir>0 ? g.x1-doorW-6 : g.x0+6;
+                        var doorY = H*0.3;
+                        wctx.fillStyle = 'rgba(20,18,15,0.95)';
+                        wctx.fillRect(doorX, doorY, doorW, doorH);
+                        wctx.strokeStyle = 'rgba(55,50,40,0.7)'; wctx.lineWidth = 1.5;
+                        wctx.strokeRect(doorX, doorY, doorW, doorH);
+                        // handle
+                        wctx.fillStyle = 'rgba(70,65,50,0.6)';
+                        wctx.fillRect(g.dir>0?doorX+5:doorX+doorW-9, doorY+doorH*0.46, 4, 9);
+                        // label
+                        if (doorW > 40){
+                            wctx.font = '11px monospace'; wctx.fillStyle = 'rgba(60,110,60,0.6)';
+                            wctx.fillText(doorPaths[gi], doorX+3, doorY-5);
+                        }
+                        // flickering ceiling light over the gap
+                        var on = Math.sin(el*0.02 + gi*3) > -0.4;
+                        if (on){
+                            var lx = (g.x0+g.x1)/2;
+                            wctx.fillStyle = 'rgba(160,200,160,0.5)';
+                            wctx.fillRect(lx-15, 8, 30, 5);
+                            wctx.fillStyle = 'rgba(60,90,60,0.12)';
+                            wctx.beginPath(); wctx.moveTo(lx-15,13); wctx.lineTo(lx-45,H);
+                            wctx.lineTo(lx+45,H); wctx.lineTo(lx+15,13); wctx.fill();
+                        }
+                    });
+                    requestAnimationFrame(drawWalls);
+                }
+                requestAnimationFrame(drawWalls);
+
+                // ---- audio: footsteps, breathing, drone (during walk) ----
                 var base = window._mysteryOsc && window._mysteryOsc.ctx;
                 var actx = base || new (window.AudioContext || window.webkitAudioContext)();
                 if (actx.state === 'suspended') actx.resume();
                 var at = actx.currentTime;
-                for (var i = 0; i < 18; i++) {
-                    var st = at + 1.5 + i * 1.5;
+                for (var i = 0; i < 14; i++) {
+                    var st = at + 0.6 + i * 0.62;
                     var bl = Math.floor(actx.sampleRate * 0.12);
                     var sb = actx.createBuffer(1, bl, actx.sampleRate);
                     var sd = sb.getChannelData(0);
                     for (var j=0;j<bl;j++) sd[j] = (Math.random()*2-1)*Math.exp(-j/(bl*0.15));
                     var sn = actx.createBufferSource(); sn.buffer = sb;
-                    var sf = actx.createBiquadFilter(); sf.type='lowpass'; sf.frequency.value = 300+i*20;
+                    var sf = actx.createBiquadFilter(); sf.type='lowpass'; sf.frequency.value = 280 + i*18;
                     var sg = actx.createGain();
-                    sg.gain.setValueAtTime(0.15+(i>12?0.08:0), st);
+                    sg.gain.setValueAtTime(0.12 + (i>9?0.07:0), st);
                     sg.gain.exponentialRampToValueAtTime(0.001, st+0.4);
                     sn.connect(sf); sf.connect(sg); sg.connect(actx.destination);
                     sn.start(st); sn.stop(st+0.45);
                 }
-                for (var i = 0; i < 10; i++) {
-                    var bt = at + 2 + i * 2.8;
-                    var bo = actx.createOscillator(); var bg = actx.createGain(); var bf = actx.createBiquadFilter();
-                    bo.type='sine'; bo.frequency.setValueAtTime(120+i*5, bt); bo.frequency.linearRampToValueAtTime(80, bt+1.2);
-                    bf.type='lowpass'; bf.frequency.value=200;
-                    bg.gain.setValueAtTime(0, bt); bg.gain.linearRampToValueAtTime(0.04+i*0.01, bt+0.4); bg.gain.linearRampToValueAtTime(0, bt+1.3);
-                    bo.connect(bf); bf.connect(bg); bg.connect(actx.destination); bo.start(bt); bo.stop(bt+1.4);
+                var drone = actx.createOscillator(); var dgn = actx.createGain();
+                drone.type='sawtooth'; drone.frequency.setValueAtTime(30, at); drone.frequency.linearRampToValueAtTime(24, at+9);
+                dgn.gain.setValueAtTime(0, at); dgn.gain.linearRampToValueAtTime(0.07, at+2);
+                dgn.gain.setValueAtTime(0.07, at+8); dgn.gain.linearRampToValueAtTime(0.02, at+9.2);
+                drone.connect(dgn); dgn.connect(actx.destination); drone.start(at); drone.stop(at+9.5);
+
+                // ---- transition stinger (walk -> eyes) ----
+                function stinger() {
+                    var c = actx, t = c.currentTime;
+                    // impact
+                    var nl = Math.floor(c.sampleRate*0.4);
+                    var nb = c.createBuffer(1, nl, c.sampleRate);
+                    var nd = nb.getChannelData(0);
+                    for (var i=0;i<nl;i++) nd[i]=(Math.random()*2-1);
+                    var nn = c.createBufferSource(); nn.buffer=nb;
+                    var nf = c.createBiquadFilter(); nf.type='bandpass'; nf.frequency.value=2600; nf.Q.value=6;
+                    var ng = c.createGain(); ng.gain.setValueAtTime(0,t); ng.gain.linearRampToValueAtTime(0.9,t+0.01); ng.gain.exponentialRampToValueAtTime(0.001,t+0.38);
+                    nn.connect(nf); nf.connect(ng); ng.connect(c.destination); nn.start(t); nn.stop(t+0.42);
+                    var o = c.createOscillator(); var og=c.createGain();
+                    o.type='sawtooth'; o.frequency.setValueAtTime(70,t); o.frequency.exponentialRampToValueAtTime(28,t+0.25);
+                    og.gain.setValueAtTime(0.55,t); og.gain.exponentialRampToValueAtTime(0.001,t+0.5);
+                    o.connect(og); og.connect(c.destination); o.start(t); o.stop(t+0.52);
+                    // screech swell for the eyes
+                    var sc = c.createOscillator(); var scg=c.createGain(); var scf=c.createBiquadFilter();
+                    sc.type='square'; sc.frequency.setValueAtTime(1800,t); sc.frequency.linearRampToValueAtTime(3000,t+2.6);
+                    scf.type='bandpass'; scf.frequency.value=2500; scf.Q.value=9;
+                    scg.gain.setValueAtTime(0,t); scg.gain.linearRampToValueAtTime(0.18,t+0.2);
+                    scg.gain.setValueAtTime(0.18,t+2.2); scg.gain.exponentialRampToValueAtTime(0.001,t+2.9);
+                    sc.connect(scf); scf.connect(scg); scg.connect(c.destination); sc.start(t); sc.stop(t+3);
                 }
-                var drone = actx.createOscillator(); var dg = actx.createGain();
-                drone.type='sawtooth'; drone.frequency.value=28;
-                dg.gain.setValueAtTime(0,at); dg.gain.linearRampToValueAtTime(0.07,at+3);
-                dg.gain.setValueAtTime(0.07,at+26); dg.gain.linearRampToValueAtTime(0,at+30);
-                drone.connect(dg); dg.connect(actx.destination); drone.start(at); drone.stop(at+30.5);
-                // Dripping water
-                for (var i=0;i<8;i++) {
-                    var dt = at + 4 + i*3.2 + Math.random()*1.5;
-                    var dOsc = actx.createOscillator(); var dGain = actx.createGain();
-                    dOsc.type='sine'; dOsc.frequency.setValueAtTime(600+Math.random()*400, dt);
-                    dOsc.frequency.exponentialRampToValueAtTime(200, dt+0.1);
-                    dGain.gain.setValueAtTime(0.06, dt); dGain.gain.exponentialRampToValueAtTime(0.001, dt+0.15);
-                    dOsc.connect(dGain); dGain.connect(actx.destination); dOsc.start(dt); dOsc.stop(dt+0.2);
+
+                // ---- play walk, then eyes ----
+                var switched = false;
+                function toEyes() {
+                    if (switched) return; switched = true;
+                    wallsRunning = false;
+                    // white flash punch-in
+                    flash.style.transition = 'none'; flash.style.opacity = '0.85';
+                    requestAnimationFrame(function(){
+                        flash.style.transition = 'opacity 0.5s ease-out';
+                        flash.style.opacity = '0';
+                    });
+                    walkVid.className = 'msw_vid';
+                    walkVid.pause();
+                    overlay.className = 'active hard';
+                    eyesVid.className = 'msw_vid show';
+                    try { eyesVid.currentTime = 0; } catch(e){}
+                    var p = eyesVid.play(); if (p && p.catch) p.catch(function(){});
+                    stinger();
+                    var eyesDur = (eyesVid.duration && isFinite(eyesVid.duration)) ? eyesVid.duration*1000 : 3000;
+                    eyesVid.onended = endScene;
+                    setTimeout(endScene, eyesDur + 250);
+                }
+                function endScene() {
+                    overlay.className = '';
+                    walkVid.className = 'msw_vid'; eyesVid.className = 'msw_vid';
+                    walkVid.removeAttribute('src'); eyesVid.removeAttribute('src');
+                    if (walkVid._url) { URL.revokeObjectURL(walkVid._url); walkVid._url = null; }
+                    if (eyesVid._url) { URL.revokeObjectURL(eyesVid._url); eyesVid._url = null; }
+                    wctx.clearRect(0,0,W,H);
                 }
 
-                function draw(ts) {
-                    var el = ts - start;
-                    var t = Math.min(el / dur, 1.0);
-                    ctx.clearRect(0, 0, w, h);
-                    var alpha = t < 0.04 ? t/0.04 : t > 0.93 ? (1-t)/0.07 : 1;
-                    ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-
-                    ctx.fillStyle = '#050505';
-                    ctx.fillRect(0, 0, w, h);
-
-                    var walkProgress = t * 8;
-                    var bobX = Math.sin(el * 0.0015) * 10;
-                    var bobY = Math.abs(Math.sin(el * 0.003)) * 8;
-                    var cx = w/2 + bobX;
-                    var cy = h/2 + bobY;
-
-                    // Corridor — solid filled walls, floor, ceiling
-                    // Left wall
-                    ctx.fillStyle = '#1a1f1a';
-                    ctx.beginPath();
-                    ctx.moveTo(0, 0); ctx.lineTo(cx - 8, cy - 8);
-                    ctx.lineTo(cx - 8, cy + 8); ctx.lineTo(0, h); ctx.fill();
-                    // Right wall
-                    ctx.fillStyle = '#181d18';
-                    ctx.beginPath();
-                    ctx.moveTo(w, 0); ctx.lineTo(cx + 8, cy - 8);
-                    ctx.lineTo(cx + 8, cy + 8); ctx.lineTo(w, h); ctx.fill();
-                    // Floor
-                    ctx.fillStyle = '#121512';
-                    ctx.beginPath();
-                    ctx.moveTo(0, h); ctx.lineTo(cx - 8, cy + 8);
-                    ctx.lineTo(cx + 8, cy + 8); ctx.lineTo(w, h); ctx.fill();
-                    // Ceiling
-                    ctx.fillStyle = '#0e110e';
-                    ctx.beginPath();
-                    ctx.moveTo(0, 0); ctx.lineTo(cx - 8, cy - 8);
-                    ctx.lineTo(cx + 8, cy - 8); ctx.lineTo(w, 0); ctx.fill();
-
-                    // Wall panel lines — thick, visible
-                    for (var i = 1; i < 14; i++) {
-                        var pd = i / 14;
-                        var pd2 = pd * pd;
-                        // Horizontal lines on walls
-                        var leftX = pd2 * (cx - 8);
-                        var rightX = w - pd2 * (w - cx - 8);
-                        var topY = pd2 * (cy - 8);
-                        var botY = h - pd2 * (h - cy - 8);
-                        var midY = topY + (botY - topY) * 0.5;
-                        // Wall edges
-                        ctx.strokeStyle = 'rgba(50,65,50,' + (0.6 - pd*0.4) + ')';
-                        ctx.lineWidth = 2 - pd * 1.5;
-                        ctx.beginPath(); ctx.moveTo(leftX, topY); ctx.lineTo(leftX, botY); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(rightX, topY); ctx.lineTo(rightX, botY); ctx.stroke();
-                        // Floor grid
-                        ctx.strokeStyle = 'rgba(40,55,40,' + (0.4 - pd*0.3) + ')';
-                        ctx.beginPath(); ctx.moveTo(leftX, botY); ctx.lineTo(rightX, botY); ctx.stroke();
-                        // Ceiling grid
-                        ctx.strokeStyle = 'rgba(30,40,30,' + (0.3 - pd*0.2) + ')';
-                        ctx.beginPath(); ctx.moveTo(leftX, topY); ctx.lineTo(rightX, topY); ctx.stroke();
-                        // Wainscoting / wall detail
-                        if (i % 2 === 0) {
-                            ctx.strokeStyle = 'rgba(45,55,40,' + (0.3 - pd*0.2) + ')';
-                            ctx.beginPath(); ctx.moveTo(leftX, midY); ctx.lineTo(leftX + 1, midY); ctx.stroke();
-                            ctx.beginPath(); ctx.moveTo(rightX - 1, midY); ctx.lineTo(rightX, midY); ctx.stroke();
-                        }
-                    }
-
-                    // Ceiling lights — bright, clearly visible
-                    for (var i = 0; i < 8; i++) {
-                        var lightDepth = ((i * 0.8 - walkProgress * 0.3) % 4 + 4) % 4;
-                        if (lightDepth > 3.5) continue;
-                        var ld = lightDepth / 4;
-                        var ld2 = ld * ld;
-                        var lightW = 50 * (1 - ld2);
-                        var lightH = 8 * (1 - ld2);
-                        var lightX = cx - lightW/2;
-                        var lightY = cy - h*0.44*(1 - ld2*0.9) - 4;
-                        if (lightW < 4) continue;
-
-                        var broken = (i === 3 || i === 6);
-                        var on = broken ? (Math.sin(el*0.03 + i*5) > 0.7) : true;
-                        if (on) {
-                            var brightness = broken ? 0.4 + Math.random()*0.4 : 0.85;
-                            // Light fixture
-                            ctx.fillStyle = 'rgba(200,240,200,' + (brightness * (1-ld)) + ')';
-                            ctx.fillRect(lightX, lightY, lightW, lightH);
-                            // Glow around fixture
-                            ctx.fillStyle = 'rgba(120,180,120,' + (0.2 * brightness * (1-ld)) + ')';
-                            ctx.fillRect(lightX - 5, lightY - 3, lightW + 10, lightH + 6);
-                            // Light cone — big visible triangle on floor
-                            var coneW = lightW * 4 * (1 - ld);
-                            var floorY = cy + h*0.44*(1-ld2*0.9);
-                            ctx.fillStyle = 'rgba(30,55,30,' + (0.2 * brightness * (1-ld)) + ')';
-                            ctx.beginPath();
-                            ctx.moveTo(lightX, lightY + lightH);
-                            ctx.lineTo(cx - coneW/2, floorY);
-                            ctx.lineTo(cx + coneW/2, floorY);
-                            ctx.lineTo(lightX + lightW, lightY + lightH);
-                            ctx.fill();
-                            // Floor light pool
-                            ctx.fillStyle = 'rgba(35,60,35,' + (0.15 * brightness * (1-ld)) + ')';
-                            ctx.fillRect(cx - coneW*0.3, floorY - 3, coneW*0.6, 6);
-                        }
-                    }
-
-                    // Wall pipes — both sides
-                    ctx.strokeStyle = 'rgba(40,45,35,0.5)';
-                    ctx.lineWidth = 3;
-                    var pipeLeftX = cx - w*0.44;
-                    var pipeRightX = cx + w*0.44;
-                    ctx.beginPath(); ctx.moveTo(pipeLeftX, h*0.4); ctx.lineTo(cx, cy); ctx.stroke();
-                    ctx.beginPath(); ctx.moveTo(pipeRightX, h*0.4); ctx.lineTo(cx, cy); ctx.stroke();
-
-                    // Doors — BOTH sides, clearly visible
-                    for (var d = 0; d < doorLabels.length; d++) {
-                        var doorDepth = d*0.9 - walkProgress + 2;
-                        if (doorDepth < -0.3 || doorDepth > 5) continue;
-                        var dd = Math.max(0, doorDepth) / 5;
-                        var dd2 = dd * dd;
-                        var doorW = w * 0.08 * (1 - dd2);
-                        var doorH = h * 0.28 * (1 - dd2);
-                        if (doorW < 4 || doorH < 8) continue;
-
-                        // Alternate left/right
-                        var side = d % 2 === 0 ? 1 : -1;
-                        var wallDist = w * 0.48 * (1 - dd2 * 0.9);
-                        var doorX = cx + side * wallDist - (side > 0 ? doorW : 0);
-                        var doorY = cy - doorH * 0.45;
-
-                        // Door frame
-                        ctx.fillStyle = 'rgba(25,22,18,' + (0.95 - dd*0.4) + ')';
-                        ctx.fillRect(doorX, doorY, doorW, doorH);
-                        ctx.strokeStyle = 'rgba(55,50,40,' + (0.8 - dd*0.3) + ')';
-                        ctx.lineWidth = 1.5 - dd;
-                        ctx.strokeRect(doorX, doorY, doorW, doorH);
-
-                        // Door handle
-                        if (doorW > 12) {
-                            var handleX = side > 0 ? doorX + 5 : doorX + doorW - 8;
-                            ctx.fillStyle = 'rgba(70,65,50,' + (0.6 - dd*0.3) + ')';
-                            ctx.fillRect(handleX, doorY + doorH*0.45, 4, 8);
-                        }
-
-                        // Label above door
-                        if (doorW > 15 && doorLabels[d]) {
-                            var fontSize = Math.max(8, Math.floor(12 * (1-dd)));
-                            ctx.font = fontSize + 'px monospace';
-                            ctx.fillStyle = 'rgba(60,110,60,' + (0.7 - dd*0.3) + ')';
-                            ctx.fillText(doorLabels[d], doorX + 2, doorY - 4);
-                        }
-
-                        // Last labeled door is OPEN with green light
-                        if (d === 5 && doorDepth < 2.5 && doorDepth > 0) {
-                            var openness = 1 - doorDepth/2.5;
-                            ctx.fillStyle = 'rgba(15,50,20,' + (0.5*openness) + ')';
-                            ctx.fillRect(doorX+2, doorY+2, doorW-4, doorH-4);
-                            // Light spill
-                            var spillW = doorW * 2 * openness;
-                            ctx.fillStyle = 'rgba(20,70,25,' + (0.2*openness) + ')';
-                            ctx.beginPath();
-                            ctx.moveTo(doorX, doorY+doorH);
-                            ctx.lineTo(doorX - side*spillW, doorY+doorH + 50*openness);
-                            ctx.lineTo(doorX + doorW - side*spillW, doorY+doorH + 50*openness);
-                            ctx.lineTo(doorX+doorW, doorY+doorH);
-                            ctx.fill();
-                        }
-                    }
-
-                    // Wet floor patches — reflective
-                    for (var i = 0; i < 5; i++) {
-                        var patchDepth = ((i * 1.3 - walkProgress * 0.2) % 3 + 3) % 3;
-                        var pd = patchDepth / 3;
-                        var patchW = 60 * (1-pd*pd);
-                        var patchH = 8 * (1-pd*pd);
-                        var patchX = cx + (i%2===0?-1:1) * w*0.15*(1-pd*pd) - patchW/2;
-                        var patchY = cy + h*0.35*(1-pd*pd);
-                        if (patchW > 5) {
-                            ctx.fillStyle = 'rgba(15,25,18,' + (0.3*(1-pd)) + ')';
-                            ctx.fillRect(patchX, patchY, patchW, patchH);
-                        }
-                    }
-
-                    // SOMETHING FOLLOWING — visible from early on
-                    if (t > 0.15) {
-                        var followT = Math.min((t - 0.15) / 0.7, 1);
-                        // Dark presence at edges, growing
-                        var edgeAlpha = 0.03 + followT * 0.25;
-                        var edgeW = w * (0.05 + followT * 0.12);
-                        ctx.fillStyle = 'rgba(0,0,0,' + edgeAlpha + ')';
-                        ctx.fillRect(0, 0, edgeW, h);
-                        ctx.fillRect(w-edgeW, 0, edgeW, h);
-
-                        // Shadow on the floor behind you (bottom of screen)
-                        if (t > 0.3) {
-                            var shadowT = (t - 0.3) / 0.5;
-                            shadowT = Math.min(shadowT, 1);
-                            var shadowH = h * 0.1 * shadowT;
-                            var shadowGrad = ctx.createLinearGradient(0, h, 0, h - shadowH);
-                            shadowGrad.addColorStop(0, 'rgba(0,0,0,' + (0.4*shadowT) + ')');
-                            shadowGrad.addColorStop(1, 'rgba(0,0,0,0)');
-                            ctx.fillStyle = shadowGrad;
-                            ctx.fillRect(0, h - shadowH, w, shadowH);
-                        }
-
-                        // At 40% — shape glimpsed in peripheral, like someone ducking behind a door
-                        if (t > 0.35 && t < 0.5) {
-                            var peekT = (t - 0.35) / 0.15;
-                            var peekAlpha = Math.sin(peekT * Math.PI) * 0.3;
-                            ctx.fillStyle = 'rgba(5,5,5,' + peekAlpha + ')';
-                            ctx.beginPath();
-                            ctx.arc(w*0.12, h*0.45, 20, 0, Math.PI*2);
-                            ctx.fill();
-                            ctx.fillRect(w*0.1, h*0.45, 15, 40);
-                        }
-
-                        // At 60% — you hear it closer. Dark shape bottom-left, more defined
-                        if (t > 0.55 && t < 0.75) {
-                            var closeT = (t - 0.55) / 0.2;
-                            var closeAlpha = 0.1 + closeT * 0.3;
-                            ctx.fillStyle = 'rgba(3,3,3,' + closeAlpha + ')';
-                            // Head
-                            ctx.beginPath();
-                            ctx.arc(w*0.06 + closeT*w*0.03, h*0.6, 18 + closeT*10, 0, Math.PI*2);
-                            ctx.fill();
-                            // Body
-                            ctx.fillRect(w*0.03 + closeT*w*0.03, h*0.62, 30, 60 + closeT*30);
-                        }
-                    }
-
-                    // THE MIRROR — approaches from t > 0.65
-                    if (t > 0.65) {
-                        var mirrorT = Math.min((t - 0.65) / 0.25, 1);
-                        var mirrorW = w * 0.3 * mirrorT;
-                        var mirrorH = h * 0.4 * mirrorT;
-                        var mx = cx - mirrorW/2;
-                        var my = cy - mirrorH/2 - 20;
-
-                        // Frame
-                        ctx.fillStyle = 'rgba(30,25,20,0.9)';
-                        ctx.fillRect(mx-5, my-5, mirrorW+10, mirrorH+10);
-                        ctx.strokeStyle = 'rgba(60,50,40,0.7)';
-                        ctx.lineWidth = 2;
-                        ctx.strokeRect(mx-5, my-5, mirrorW+10, mirrorH+10);
-
-                        // Mirror surface
-                        var mGrad = ctx.createLinearGradient(mx, my, mx, my+mirrorH);
-                        mGrad.addColorStop(0, 'rgba(10,18,12,0.95)');
-                        mGrad.addColorStop(0.5, 'rgba(8,14,10,0.95)');
-                        mGrad.addColorStop(1, 'rgba(6,10,8,0.95)');
-                        ctx.fillStyle = mGrad;
-                        ctx.fillRect(mx, my, mirrorW, mirrorH);
-
-                        // Figure in mirror — visible as soon as mirror appears
-                        if (mirrorT > 0.2) {
-                            var figA = Math.min((mirrorT-0.2)/0.5, 1);
-                            var fcx = mx + mirrorW*0.5;
-                            var fcy = my + mirrorH*0.35;
-                            // Monitor glow behind figure
-                            ctx.fillStyle = 'rgba(30,90,35,' + (figA*0.5) + ')';
-                            ctx.fillRect(fcx - mirrorW*0.15, fcy - mirrorH*0.12, mirrorW*0.3, mirrorH*0.22);
-                            // Desk
-                            ctx.fillStyle = 'rgba(35,30,22,' + (figA*0.7) + ')';
-                            ctx.fillRect(mx+mirrorW*0.15, my+mirrorH*0.6, mirrorW*0.7, mirrorH*0.08);
-                            // Head — hunched over, looking at screen
-                            ctx.fillStyle = 'rgba(12,12,12,' + (figA*0.9) + ')';
-                            ctx.beginPath(); ctx.arc(fcx, fcy, mirrorW*0.06, 0, Math.PI*2); ctx.fill();
-                            // Shoulders
-                            ctx.beginPath();
-                            ctx.ellipse(fcx, fcy + mirrorH*0.08, mirrorW*0.11, mirrorH*0.04, 0, 0, Math.PI);
-                            ctx.fill();
-                            // Arms on desk
-                            ctx.fillRect(fcx - mirrorW*0.13, my+mirrorH*0.55, mirrorW*0.26, mirrorH*0.06);
-                            // Monitor text reflection on face
-                            ctx.fillStyle = 'rgba(40,100,45,' + (figA*0.2) + ')';
-                            ctx.beginPath(); ctx.arc(fcx, fcy - mirrorW*0.01, mirrorW*0.04, 0, Math.PI*2); ctx.fill();
-                        }
-
-                        // THE LOOK — figure raises head, eyes lock on
-                        if (t > 0.88) {
-                            var lookT = Math.min((t-0.88)/0.04, 1);
-                            var fcx = mx + mirrorW*0.5;
-                            var headY = my + mirrorH*0.35 - lookT * mirrorH*0.05;
-                            // Head lifts
-                            ctx.fillStyle = 'rgba(12,12,12,0.95)';
-                            ctx.beginPath(); ctx.arc(fcx, headY, mirrorW*0.065, 0, Math.PI*2); ctx.fill();
-                            // Eyes — green, bright, staring
-                            var eyeGlow = 0.5 + lookT * 0.5;
-                            ctx.fillStyle = 'rgba(100,230,110,' + eyeGlow + ')';
-                            ctx.beginPath(); ctx.arc(fcx - mirrorW*0.025, headY - 2, 2.5 + lookT*1.5, 0, Math.PI*2); ctx.fill();
-                            ctx.beginPath(); ctx.arc(fcx + mirrorW*0.025, headY - 2, 2.5 + lookT*1.5, 0, Math.PI*2); ctx.fill();
-
-                            // Smile — appears last
-                            if (lookT > 0.7) {
-                                var smileA = (lookT - 0.7) / 0.3;
-                                ctx.strokeStyle = 'rgba(100,230,110,' + (smileA * 0.6) + ')';
-                                ctx.lineWidth = 1.5;
-                                ctx.beginPath();
-                                ctx.arc(fcx, headY + mirrorW*0.02, mirrorW*0.03, 0.1*Math.PI, 0.9*Math.PI);
-                                ctx.stroke();
-                            }
-                        }
-                    }
-
-                    // Scan lines
-                    ctx.fillStyle = 'rgba(0,0,0,0.06)';
-                    for (var y = 0; y < h; y += 3) ctx.fillRect(0, y, w, 1);
-                    ctx.fillStyle = 'rgba(0,12,0,0.04)';
-                    ctx.fillRect(0, 0, w, h);
-
-                    if (t < 1) requestAnimationFrame(draw);
-                    else { overlay.className = ''; ctx.clearRect(0, 0, w, h); }
-                }
-                requestAnimationFrame(draw);
+                walkVid.className = 'msw_vid show';
+                walkVid.onloadedmetadata = function(){
+                    try { walkVid.currentTime = 1.2; } catch(e){}   // trim: start figure closer
+                };
+                walkVid.onended = toEyes;
+                var pw = walkVid.play(); if (pw && pw.catch) pw.catch(function(){});
+                // fallback in case 'ended' never fires (loop/seek quirks)
+                setTimeout(toEyes, 9200);
             };
         </script>
         {{{ SCRIPT }}}

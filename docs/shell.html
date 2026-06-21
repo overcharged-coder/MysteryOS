@@ -1527,45 +1527,46 @@
                 will-change:transform,filter;
             }
             .msw_vid.show { display:block; }
-            /* glitch for the walk — subtle, figure stays readable + brightened */
+            /* walk glitch — figure visible, creepy baseline + harder bursts */
             @keyframes _msw_soft {
                 0%   { transform:translate(-50%,-50%) translate(0,0);
-                       filter:brightness(1.5) contrast(1.15) drop-shadow(2px 0 0 rgba(255,0,0,.35)) drop-shadow(-2px 0 0 rgba(0,255,255,.35)); }
-                35%  { transform:translate(-50%,-50%) translate(-2px,1px);
-                       filter:brightness(1.55) contrast(1.2) drop-shadow(3px 0 0 rgba(255,0,0,.4)) drop-shadow(-3px 0 0 rgba(0,255,255,.4)) hue-rotate(-8deg); }
-                70%  { transform:translate(-50%,-50%) translate(2px,-1px);
-                       filter:brightness(1.5) contrast(1.15) drop-shadow(-2px 0 0 rgba(255,0,0,.4)) drop-shadow(2px 0 0 rgba(0,255,255,.4)) hue-rotate(6deg); }
+                       filter:brightness(1.8) contrast(1.1) drop-shadow(3px 0 0 rgba(255,0,0,.4)) drop-shadow(-3px 0 0 rgba(0,255,255,.4)); }
+                35%  { transform:translate(-50%,-50%) translate(-3px,1px);
+                       filter:brightness(1.85) contrast(1.15) drop-shadow(4px 0 0 rgba(255,0,0,.45)) drop-shadow(-4px 0 0 rgba(0,255,255,.45)) hue-rotate(-10deg); }
+                70%  { transform:translate(-50%,-50%) translate(3px,-2px);
+                       filter:brightness(1.8) contrast(1.1) drop-shadow(-3px 0 0 rgba(255,0,0,.45)) drop-shadow(3px 0 0 rgba(0,255,255,.45)) hue-rotate(8deg); }
                 100% { transform:translate(-50%,-50%) translate(0,0);
-                       filter:brightness(1.5) contrast(1.15) drop-shadow(2px 0 0 rgba(255,0,0,.35)) drop-shadow(-2px 0 0 rgba(0,255,255,.35)); }
+                       filter:brightness(1.8) contrast(1.1) drop-shadow(3px 0 0 rgba(255,0,0,.4)) drop-shadow(-3px 0 0 rgba(0,255,255,.4)); }
             }
-            /* occasional hard glitch bursts so the walk isn't constant chaos */
+            /* frequent glitch bursts — harder, every 2s */
             @keyframes _msw_burst {
-                0%,82%,100% { transform:translate(-50%,-50%) translate(0,0) skewX(0deg); filter:brightness(1.5) contrast(1.15); }
-                86% { transform:translate(-50%,-50%) translate(-9px,3px) skewX(-3deg); filter:brightness(1.4) drop-shadow(11px 0 0 rgba(255,0,0,.7)) drop-shadow(-11px 0 0 rgba(0,255,255,.7)) hue-rotate(40deg); }
-                90% { transform:translate(-50%,-50%) translate(10px,-4px) skewX(4deg); filter:brightness(1.6) drop-shadow(-9px 0 0 rgba(255,0,0,.7)) drop-shadow(9px 0 0 rgba(0,255,255,.7)) hue-rotate(-50deg); }
-                94% { transform:translate(-50%,-50%) translate(-5px,2px) skewX(-2deg); filter:brightness(1.5) drop-shadow(6px 0 0 rgba(255,0,0,.6)) drop-shadow(-6px 0 0 rgba(0,255,255,.6)); }
+                0%,72%,100% { transform:translate(-50%,-50%) translate(0,0) skewX(0deg); filter:brightness(1.8) contrast(1.1); }
+                76% { transform:translate(-50%,-50%) translate(-14px,5px) skewX(-4deg); filter:brightness(2) contrast(1.3) drop-shadow(14px 0 0 rgba(255,0,0,.8)) drop-shadow(-14px 0 0 rgba(0,255,255,.8)) hue-rotate(50deg); }
+                81% { transform:translate(-50%,-50%) translate(16px,-6px) skewX(5deg); filter:brightness(1.6) contrast(1.4) drop-shadow(-12px 0 0 rgba(255,0,0,.8)) drop-shadow(12px 0 0 rgba(0,255,255,.8)) hue-rotate(-60deg); }
+                86% { transform:translate(-50%,-50%) translate(-8px,4px) skewX(-3deg); filter:brightness(2.2) contrast(1.2) drop-shadow(16px 0 0 rgba(255,0,0,.75)) drop-shadow(-16px 0 0 rgba(0,255,255,.75)) hue-rotate(30deg); }
+                90% { transform:translate(-50%,-50%) translate(6px,-3px) skewX(2deg); filter:brightness(1.7) contrast(1.15) drop-shadow(8px 0 0 rgba(255,0,0,.6)) drop-shadow(-8px 0 0 rgba(0,255,255,.6)); }
             }
-            #_msw_walk_vid.show { animation:_msw_soft 0.45s infinite steps(3), _msw_burst 3.5s infinite; }
-            /* heavy glitch for the eyes — violent */
+            #_msw_walk_vid.show { animation:_msw_soft 0.4s infinite steps(3), _msw_burst 2s infinite; }
+            /* heavy glitch for the eyes — violent shake/split but contrast preserved so the circle reads */
             @keyframes _msw_hard {
                 0%   { transform:translate(-50%,-50%) translate(0,0) scale(1.02) skewX(0deg);
-                       filter:drop-shadow(10px 0 0 rgba(255,0,0,.85)) drop-shadow(-10px 0 0 rgba(0,255,255,.85)) contrast(2.2) saturate(2.2); }
-                14%  { transform:translate(-50%,-50%) translate(16px,-9px) scale(1.06) skewX(-4deg);
-                       filter:drop-shadow(-20px 0 0 rgba(255,0,0,.9)) drop-shadow(20px 0 0 rgba(0,255,255,.9)) contrast(2.8) hue-rotate(70deg) saturate(2.6); }
-                28%  { transform:translate(-50%,-50%) translate(-18px,11px) scale(1.0) skewX(5deg);
-                       filter:drop-shadow(18px 0 0 rgba(255,0,0,.9)) drop-shadow(-18px 0 0 rgba(0,255,255,.9)) contrast(2.4) hue-rotate(-90deg) invert(0.1); }
-                42%  { transform:translate(-50%,-50%) translate(12px,14px) scale(1.09) skewX(-2deg);
-                       filter:drop-shadow(-25px 0 0 rgba(255,0,0,.95)) drop-shadow(25px 0 0 rgba(0,255,255,.95)) contrast(3) hue-rotate(150deg) saturate(3); }
-                56%  { transform:translate(-50%,-50%) translate(-14px,-12px) scale(1.03) skewX(6deg);
-                       filter:drop-shadow(22px 0 0 rgba(255,0,0,.9)) drop-shadow(-22px 0 0 rgba(0,255,255,.9)) contrast(2.6) hue-rotate(-130deg); }
-                70%  { transform:translate(-50%,-50%) translate(20px,6px) scale(1.07) skewX(-5deg);
-                       filter:drop-shadow(-16px 0 0 rgba(255,0,0,.9)) drop-shadow(16px 0 0 rgba(0,255,255,.9)) contrast(2.9) hue-rotate(40deg) invert(0.15); }
-                85%  { transform:translate(-50%,-50%) translate(-10px,9px) scale(1.01) skewX(3deg);
-                       filter:drop-shadow(14px 0 0 rgba(255,0,0,.85)) drop-shadow(-14px 0 0 rgba(0,255,255,.85)) contrast(2.5) hue-rotate(-60deg); }
+                       filter:brightness(1.6) contrast(1.3) drop-shadow(12px 0 0 rgba(255,0,0,.85)) drop-shadow(-12px 0 0 rgba(0,255,255,.85)); }
+                14%  { transform:translate(-50%,-50%) translate(16px,-9px) scale(1.06) skewX(-5deg);
+                       filter:brightness(1.7) contrast(1.4) drop-shadow(-22px 0 0 rgba(255,0,0,.9)) drop-shadow(22px 0 0 rgba(0,255,255,.9)) hue-rotate(50deg); }
+                28%  { transform:translate(-50%,-50%) translate(-18px,11px) scale(1.0) skewX(6deg);
+                       filter:brightness(1.5) contrast(1.35) drop-shadow(20px 0 0 rgba(255,0,0,.9)) drop-shadow(-20px 0 0 rgba(0,255,255,.9)) hue-rotate(-70deg); }
+                42%  { transform:translate(-50%,-50%) translate(12px,14px) scale(1.09) skewX(-3deg);
+                       filter:brightness(1.8) contrast(1.3) drop-shadow(-26px 0 0 rgba(255,0,0,.95)) drop-shadow(26px 0 0 rgba(0,255,255,.95)) hue-rotate(120deg); }
+                56%  { transform:translate(-50%,-50%) translate(-14px,-12px) scale(1.03) skewX(7deg);
+                       filter:brightness(1.6) contrast(1.4) drop-shadow(24px 0 0 rgba(255,0,0,.9)) drop-shadow(-24px 0 0 rgba(0,255,255,.9)) hue-rotate(-100deg); }
+                70%  { transform:translate(-50%,-50%) translate(20px,6px) scale(1.07) skewX(-6deg);
+                       filter:brightness(1.9) contrast(1.25) drop-shadow(-18px 0 0 rgba(255,0,0,.9)) drop-shadow(18px 0 0 rgba(0,255,255,.9)) hue-rotate(30deg) invert(0.12); }
+                85%  { transform:translate(-50%,-50%) translate(-10px,9px) scale(1.01) skewX(4deg);
+                       filter:brightness(1.5) contrast(1.35) drop-shadow(16px 0 0 rgba(255,0,0,.85)) drop-shadow(-16px 0 0 rgba(0,255,255,.85)) hue-rotate(-45deg); }
                 100% { transform:translate(-50%,-50%) translate(0,0) scale(1.02) skewX(0deg);
-                       filter:drop-shadow(10px 0 0 rgba(255,0,0,.85)) drop-shadow(-10px 0 0 rgba(0,255,255,.85)) contrast(2.3) saturate(2.3); }
+                       filter:brightness(1.6) contrast(1.3) drop-shadow(12px 0 0 rgba(255,0,0,.85)) drop-shadow(-12px 0 0 rgba(0,255,255,.85)); }
             }
-            #_msw_eyes_vid.show { animation:_msw_hard 0.1s infinite steps(2); }
+            #_msw_eyes_vid.show { animation:_msw_hard 0.12s infinite steps(2); }
             #_msw_glitch {
                 position:absolute; inset:0; pointer-events:none;
                 background:repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.34) 2px 3px);

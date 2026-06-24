@@ -207,9 +207,16 @@ void Terminal::execute(const string& raw, Kernel& k) {
     }
     if (cmd == "unlock") {
         if (arg.empty()) { print("unlock: missing password"); return; }
-        if (k.puzzle().try_password(arg, k.vfs()))
-            print("Access granted. Stage " + to_string(k.puzzle().stage()) + " unlocked.");
-        else
+        if (k.puzzle().try_password(arg, k.vfs())) {
+            int s = k.puzzle().stage();
+            print("Access granted. Stage " + to_string(s) + " unlocked.");
+            if (s == 1) {
+                print("/System/Archive unlocked");
+                print("indexing archive...");
+                print("building tree...");
+                print("tree generated successfully");
+            }
+        } else
             print("unlock: incorrect password.");
         return;
     }

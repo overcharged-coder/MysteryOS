@@ -2085,8 +2085,8 @@
                     scene.clearColor = new BABYLON.Color3(0.01, 0.02, 0.01);
                     scene.ambientColor = new BABYLON.Color3(0.03, 0.06, 0.03);
                     scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
-                    scene.fogDensity = 0.022;
-                    scene.fogColor = new BABYLON.Color3(0.02, 0.04, 0.02);
+                    scene.fogDensity = 0.035;
+                    scene.fogColor = new BABYLON.Color3(0.01, 0.015, 0.01);
                     scene.collisionsEnabled = true;
                     scene.gravity = new BABYLON.Vector3(0, -0.15, 0);
 
@@ -2105,15 +2105,34 @@
                     cvs.addEventListener('click', function() { cvs.requestPointerLock(); });
 
                     var light = new BABYLON.HemisphericLight('hl', new BABYLON.Vector3(0.1, 1, 0.1), scene);
-                    light.intensity = 1.2;
-                    light.diffuse = new BABYLON.Color3(0.5, 0.85, 0.5);
-                    light.groundColor = new BABYLON.Color3(0.08, 0.12, 0.06);
+                    light.intensity = 0.06;
+                    light.diffuse = new BABYLON.Color3(0.2, 0.35, 0.2);
+                    light.groundColor = new BABYLON.Color3(0.02, 0.04, 0.02);
+
+                    // --- Flashlight (SpotLight) ---
+                    var flashSpot = new BABYLON.SpotLight('flash',
+                        camera.position.clone(),
+                        camera.getForwardRay().direction,
+                        Math.PI / 5, 12, scene);
+                    flashSpot.intensity = 2.5;
+                    flashSpot.diffuse = new BABYLON.Color3(0.95, 0.92, 0.8);
+                    flashSpot.range = 45;
+
+                    // Flashlight 3D model in player's hand
+                    BABYLON.SceneLoader.ImportMesh('', 'data/', 'Flashlight.obj', scene, function(meshes) {
+                        var flRoot = new BABYLON.TransformNode('flRoot', scene);
+                        flRoot.parent = camera;
+                        flRoot.position.set(0.35, -0.35, 0.6);
+                        flRoot.rotation.set(0, Math.PI, 0);
+                        flRoot.scaling.setAll(0.035);
+                        meshes.forEach(function(m) { m.parent = flRoot; });
+                    });
 
                     // --- Materials ---
                     var groundMat = new BABYLON.StandardMaterial('groundMat', scene);
-                    groundMat.diffuseColor = new BABYLON.Color3(0.15, 0.2, 0.08);
+                    groundMat.diffuseColor = new BABYLON.Color3(0.12, 0.15, 0.06);
                     groundMat.specularColor = BABYLON.Color3.Black();
-                    groundMat.emissiveColor = new BABYLON.Color3(0.06, 0.08, 0.03);
+                    groundMat.emissiveColor = new BABYLON.Color3(0.02, 0.03, 0.01);
 
                     var ground = BABYLON.MeshBuilder.CreateGround('ground', {width: 120, height: 120}, scene);
                     ground.material = groundMat;
@@ -2183,37 +2202,39 @@
 
                     function createSign(text, x, y, z, rotY, w, h) {
                         var id = 'sgn' + (signId++);
-                        w = w || 2.4; h = h || 0.6;
+                        w = w || 2.0; h = h || 0.5;
+                        var signH = y || 1.3;
 
                         var parent = new BABYLON.TransformNode(id + 'p', scene);
-                        parent.position.set(x, y, z);
+                        parent.position.set(x, 0, z);
+                        parent.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
 
-                        // Wooden plank (slightly thick box)
-                        var plank = BABYLON.MeshBuilder.CreateBox(id + 'b', {width: w, height: h, depth: 0.06}, scene);
+                        // Wooden post from ground up to sign
+                        var postH = signH + h * 0.5;
+                        var post = BABYLON.MeshBuilder.CreateCylinder(id + 'post', {diameter: 0.1, height: postH, tessellation: 8}, scene);
+                        post.parent = parent;
+                        post.position.y = postH * 0.5;
+                        var postMat = new BABYLON.StandardMaterial(id + 'postm', scene);
+                        postMat.diffuseColor = new BABYLON.Color3(0.3, 0.18, 0.08);
+                        postMat.emissiveColor = new BABYLON.Color3(0.1, 0.06, 0.02);
+                        postMat.specularColor = BABYLON.Color3.Black();
+                        post.material = postMat;
+
+                        // Wooden plank
+                        var plank = BABYLON.MeshBuilder.CreateBox(id + 'b', {width: w, height: h, depth: 0.05}, scene);
                         plank.parent = parent;
+                        plank.position.y = signH;
                         var plankMat = new BABYLON.StandardMaterial(id + 'pm', scene);
-                        plankMat.diffuseColor = new BABYLON.Color3(0.35, 0.22, 0.1);
-                        plankMat.emissiveColor = new BABYLON.Color3(0.12, 0.07, 0.03);
+                        plankMat.diffuseColor = new BABYLON.Color3(0.38, 0.24, 0.11);
+                        plankMat.emissiveColor = new BABYLON.Color3(0.14, 0.09, 0.04);
                         plankMat.specularColor = new BABYLON.Color3(0.05, 0.03, 0.01);
                         plank.material = plankMat;
 
-                        // Two nails
-                        for (var ni = 0; ni < 2; ni++) {
-                            var nail = BABYLON.MeshBuilder.CreateCylinder(id + 'n' + ni, {diameter: 0.06, height: 0.1}, scene);
-                            nail.parent = parent;
-                            nail.position.x = (ni === 0 ? -1 : 1) * (w * 0.4);
-                            nail.position.z = -0.04;
-                            nail.rotation.x = Math.PI / 2;
-                            var nailMat = new BABYLON.StandardMaterial(id + 'nm', scene);
-                            nailMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
-                            nailMat.emissiveColor = new BABYLON.Color3(0.08, 0.08, 0.08);
-                            nail.material = nailMat;
-                        }
-
                         // Text face
-                        var face = BABYLON.MeshBuilder.CreatePlane(id, {width: w * 0.95, height: h * 0.85}, scene);
+                        var face = BABYLON.MeshBuilder.CreatePlane(id, {width: w * 0.92, height: h * 0.8}, scene);
                         face.parent = parent;
-                        face.position.z = -0.035;
+                        face.position.y = signH;
+                        face.position.z = -0.03;
                         var tw = 512, th = 128;
                         var dt = new BABYLON.DynamicTexture(id + 'dt', {width: tw, height: th}, scene, false);
                         var mat = new BABYLON.StandardMaterial(id + 'mat', scene);
@@ -2225,14 +2246,11 @@
 
                         function draw(txt, color) {
                             var c = dt.getContext();
-                            // Wood grain background
                             c.fillStyle = '#3d2810'; c.fillRect(0, 0, tw, th);
                             for (var gi = 0; gi < 8; gi++) {
                                 c.fillStyle = 'rgba(60,35,12,' + (0.2 + Math.random() * 0.15) + ')';
-                                var gy = Math.random() * th;
-                                c.fillRect(0, gy, tw, 2 + Math.random() * 4);
+                                c.fillRect(0, Math.random() * th, tw, 2 + Math.random() * 4);
                             }
-                            // Red text, hand-painted style
                             c.font = 'bold 30px monospace';
                             c.fillStyle = color || '#cc2222';
                             c.shadowColor = '#000';
@@ -2242,8 +2260,6 @@
                             dt.update();
                         }
                         draw(text);
-
-                        parent.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
 
                         var s = {mesh: parent, setText: function(t, c) { draw(t, c); }};
                         allSigns.push(s);
@@ -2277,29 +2293,29 @@
                         {x:-13, z:9, t:'/Pictures'}, {x:16, z:10, t:'/Users'}
                     ].forEach(function(lt) {
                         queueTree(lt.x, lt.z);
-                        createSign(lt.t, lt.x, 2.5, lt.z + 0.25, 0, 2.5, 0.4);
+                        createSign(lt.t, lt.x, 1.3, lt.z + 0.25, 0, 2.2, 0.4);
                     });
 
                     // Clearing directional signs
-                    var signSystem = createSign('/System  >', 0, 2.2, 5.5, 0);
-                    var signDocs = createSign('/Documents/Personal  >', -4.5, 2.2, 3.5, 0.5);
-                    var signDesktop = createSign('/Desktop/message.txt  >', 4.5, 2.2, 3.5, -0.5);
+                    var signSystem = createSign('/System  >', 0, 1.4, 5.5, 0);
+                    var signDocs = createSign('/Documents/Personal  >', -4.5, 1.4, 3.5, 0);
+                    var signDesktop = createSign('/Desktop/message.txt  >', 4.5, 1.4, 3.5, 0);
 
                     // Dead-end signs (initially blank)
-                    var deadDocSign = createSign('', -28, 2, 12, 0);
+                    var deadDocSign = createSign('', -28, 1.3, 12, 0);
                     queueTree(28, 12, 1.5);
-                    var monitorSign = createSign('', 28, 2.5, 12.3, 0, 2, 1.2);
-                    var deadLogsSign = createSign('', -9, 2, 53, Math.PI);
+                    var monitorSign = createSign('', 28, 1.5, 12.3, 0, 2, 0.8);
+                    var deadLogsSign = createSign('', -9, 1.3, 53, 0);
 
                     // Archive path deeper signs
-                    createSign('OPERATION_MIRROR.txt  >', 8, 2.2, 43, 0.3);
-                    createSign('batch_7_raw.txt', 14, 2.2, 48, -0.2);
-                    createSign('containment_protocol.txt', 7, 2.2, 53, 0.1);
-                    createSign('previous_researcher.txt', 14, 2.2, 58, -0.3);
+                    createSign('OPERATION_MIRROR.txt  >', 8, 1.4, 43, 0);
+                    createSign('batch_7_raw.txt', 14, 1.3, 48, 0);
+                    createSign('containment_protocol.txt', 7, 1.3, 53, 0);
+                    createSign('previous_researcher.txt', 14, 1.3, 58, 0);
 
                     // MIRROR tree (massive version of the fir)
                     queueTree(12, 66, 3.0);
-                    var mirrorLabel = createSign('OPERATION_MIRROR.txt', 12, 6, 67.5, 0, 3.2, 0.7);
+                    var mirrorLabel = createSign('OPERATION_MIRROR.txt', 12, 1.8, 67.5, 0, 3.2, 0.7);
 
                     // Glow sphere around the mirror tree
                     var mirrorGlow = BABYLON.MeshBuilder.CreateSphere('mirrorGlow', {diameter: 10, segments: 12}, scene);
@@ -2312,6 +2328,29 @@
 
                     // Spawn all queued trees from OBJ
                     spawnTrees();
+
+                    // Scatter grass patches
+                    BABYLON.SceneLoader.ImportMesh('', 'data/', 'grass.obj', scene, function(gm) {
+                        if (!gm.length) return;
+                        var grassRoot = new BABYLON.TransformNode('grassRoot', scene);
+                        gm.forEach(function(m) {
+                            m.parent = grassRoot; m.isVisible = false;
+                            if (m.material) {
+                                m.material.emissiveColor = new BABYLON.Color3(0.02, 0.04, 0.02);
+                                m.material.specularColor = BABYLON.Color3.Black();
+                            }
+                        });
+                        for (var gi = 0; gi < 25; gi++) {
+                            var gx = (Math.random() - 0.5) * 90;
+                            var gz = Math.random() * 70 - 5;
+                            gm.forEach(function(m) {
+                                var inst = m.createInstance('grass_' + gi + '_' + m.name);
+                                inst.position.set(gx, 0, gz);
+                                inst.scaling.setAll(0.018 + Math.random() * 0.008);
+                                inst.rotation.y = Math.random() * Math.PI * 2;
+                            });
+                        }
+                    });
 
                     // Ground paper
                     var paperMat = new BABYLON.StandardMaterial('paperMat', scene);
@@ -2414,7 +2453,7 @@
                             cursorVisible = false;
                             var msgs = ['i was there when you looked', 'you turned too slowly', 'i see where you look'];
                             createSign(msgs[cursorAppearances - 1] || msgs[0],
-                                cursorFigure.position.x, 2.5, cursorFigure.position.z, 0, 3, 0.4);
+                                cursorFigure.position.x, 1.3, cursorFigure.position.z, 0, 3, 0.4);
                             cursorTimer = performance.now() + 7000 + Math.random() * 5000;
                         }
                     }
@@ -2488,8 +2527,8 @@
                             case 'system_fork':
                                 if (phase < 2) {
                                     phase = 2;
-                                    createSign('you picked system first', 2, 2.5, 26, 0, 2.8, 0.4);
-                                    createSign('you are making a map', -2, 2.5, 31, 0, 2.4, 0.4);
+                                    createSign('you picked system first', 2, 1.3, 26, 0, 2.8, 0.4);
+                                    createSign('you are making a map', -2, 1.3, 31, 0, 2.4, 0.4);
                                     droneGain.gain.linearRampToValueAtTime(0.05, actx.currentTime + 2);
                                     drone.frequency.linearRampToValueAtTime(36, actx.currentTime + 3);
                                 }
@@ -2565,6 +2604,10 @@
                     // --- Render loop ---
                     var lastPos = camera.position.clone();
                     engine.runRenderLoop(function() {
+                        // Update flashlight to follow camera
+                        flashSpot.position.copyFrom(camera.position);
+                        flashSpot.direction.copyFrom(camera.getForwardRay().direction);
+
                         scene.render();
                         var moved = BABYLON.Vector3.Distance(camera.position, lastPos);
                         if (moved > 0.03) playStep();

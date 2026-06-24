@@ -2177,13 +2177,13 @@
                     // Tree positions queued for when model loads
                     var treePositions = [];
                     function queueTree(x, z, scale) {
-                        var s = scale || (1.5 + Math.random() * 0.8);
+                        var s = scale || (0.15 + Math.random() * 0.1);
                         treePositions.push({x: x, z: z, s: s, ry: Math.random() * Math.PI * 2});
                     }
 
                     // Load fir.obj and instance at all queued positions
                     function spawnTrees() {
-                        BABYLON.SceneLoader.ImportMesh('', 'data/', 'fir.obj', scene, function(meshes) {
+                        BABYLON.SceneLoader.ImportMesh('', 'data/', 'MapleTree.obj', scene, function(meshes) {
                             if (!meshes.length) return;
                             // Parent all sub-meshes under a root
                             var root = new BABYLON.TransformNode('treeRoot', scene);
@@ -2293,7 +2293,7 @@
                     }
 
                     var treeCount = 0;
-                    for (var ti = 0; ti < 200 && treeCount < 110; ti++) {
+                    for (var ti = 0; ti < 200 && treeCount < 60; ti++) {
                         var tx = (Math.random() - 0.5) * 100;
                         var tz = Math.random() * 75 - 8;
                         if (!isOnPath(tx, tz)) { queueTree(tx, tz); treeCount++; }
@@ -2327,7 +2327,7 @@
                     createSign('previous_researcher.txt', 14, 1.3, 58, 0);
 
                     // MIRROR tree (massive version of the fir)
-                    queueTree(12, 66, 3.5);
+                    queueTree(12, 66, 0.45);
                     var mirrorLabel = createSign('OPERATION_MIRROR.txt', 12, 1.8, 67.5, 0, 3.2, 0.7);
 
                     // Glow sphere around the mirror tree
@@ -2599,9 +2599,9 @@
                         var fwd = camera.getForwardRay().direction;
                         var right = BABYLON.Vector3.Cross(fwd, BABYLON.Vector3.Up()).normalize();
                         // Flashlight model in bottom-right of view, extended forward
-                        var mX = camera.position.x + right.x * 0.5 + fwd.x * 1.0;
-                        var mY = camera.position.y - 0.4;
-                        var mZ = camera.position.z + right.z * 0.5 + fwd.z * 1.0;
+                        var mX = camera.position.x + right.x * 0.45 + fwd.x * 1.8;
+                        var mY = camera.position.y - 0.35;
+                        var mZ = camera.position.z + right.z * 0.45 + fwd.z * 1.8;
                         flRoot.position.set(mX, mY, mZ);
                         flRoot.rotation.y = Math.atan2(fwd.x, fwd.z);
                         // Light comes from flashlight tip (further forward)

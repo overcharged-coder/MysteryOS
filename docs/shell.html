@@ -2085,8 +2085,8 @@
                     scene.clearColor = new BABYLON.Color3(0.01, 0.02, 0.01);
                     scene.ambientColor = new BABYLON.Color3(0.03, 0.06, 0.03);
                     scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
-                    scene.fogDensity = 0.038;
-                    scene.fogColor = new BABYLON.Color3(0.01, 0.025, 0.01);
+                    scene.fogDensity = 0.022;
+                    scene.fogColor = new BABYLON.Color3(0.02, 0.04, 0.02);
                     scene.collisionsEnabled = true;
                     scene.gravity = new BABYLON.Vector3(0, -0.4, 0);
 
@@ -2105,23 +2105,25 @@
                     cvs.addEventListener('click', function() { cvs.requestPointerLock(); });
 
                     var light = new BABYLON.HemisphericLight('hl', new BABYLON.Vector3(0.1, 1, 0.1), scene);
-                    light.intensity = 0.13;
+                    light.intensity = 0.65;
                     light.diffuse = new BABYLON.Color3(0.5, 0.85, 0.5);
-                    light.groundColor = new BABYLON.Color3(0.01, 0.03, 0.01);
+                    light.groundColor = new BABYLON.Color3(0.08, 0.12, 0.06);
 
                     // --- Materials ---
                     var treeMat = new BABYLON.StandardMaterial('treeMat', scene);
-                    treeMat.diffuseColor = new BABYLON.Color3(0.12, 0.09, 0.06);
+                    treeMat.diffuseColor = new BABYLON.Color3(0.3, 0.22, 0.14);
                     treeMat.specularColor = BABYLON.Color3.Black();
-                    treeMat.emissiveColor = new BABYLON.Color3(0.02, 0.015, 0.01);
+                    treeMat.emissiveColor = new BABYLON.Color3(0.06, 0.045, 0.03);
 
                     var branchMat = new BABYLON.StandardMaterial('branchMat', scene);
-                    branchMat.diffuseColor = new BABYLON.Color3(0.08, 0.06, 0.04);
+                    branchMat.diffuseColor = new BABYLON.Color3(0.22, 0.16, 0.1);
                     branchMat.specularColor = BABYLON.Color3.Black();
+                    branchMat.emissiveColor = new BABYLON.Color3(0.04, 0.03, 0.02);
 
                     var groundMat = new BABYLON.StandardMaterial('groundMat', scene);
-                    groundMat.diffuseColor = new BABYLON.Color3(0.03, 0.045, 0.02);
+                    groundMat.diffuseColor = new BABYLON.Color3(0.1, 0.13, 0.06);
                     groundMat.specularColor = BABYLON.Color3.Black();
+                    groundMat.emissiveColor = new BABYLON.Color3(0.02, 0.03, 0.015);
 
                     var ground = BABYLON.MeshBuilder.CreateGround('ground', {width: 120, height: 120}, scene);
                     ground.material = groundMat;
@@ -2146,8 +2148,8 @@
                     skyRect.position.set(5, 42, 30);
                     skyRect.rotation.x = Math.PI / 2;
                     var skyMat = new BABYLON.StandardMaterial('skyMat', scene);
-                    skyMat.emissiveColor = new BABYLON.Color3(0.12, 0.12, 0.15);
-                    skyMat.alpha = 0.2;
+                    skyMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.25);
+                    skyMat.alpha = 0.35;
                     skyMat.backFaceCulling = false;
                     skyRect.material = skyMat;
 
@@ -2278,9 +2280,9 @@
 
                     // Ground paper
                     var paperMat = new BABYLON.StandardMaterial('paperMat', scene);
-                    paperMat.diffuseColor = new BABYLON.Color3(0.14, 0.13, 0.11);
+                    paperMat.diffuseColor = new BABYLON.Color3(0.25, 0.23, 0.2);
                     paperMat.specularColor = BABYLON.Color3.Black();
-                    paperMat.emissiveColor = new BABYLON.Color3(0.02, 0.02, 0.015);
+                    paperMat.emissiveColor = new BABYLON.Color3(0.05, 0.05, 0.04);
                     for (var pi = 0; pi < 35; pi++) {
                         var pp = BABYLON.MeshBuilder.CreatePlane('paper' + pi, {
                             width: 0.35 + Math.random() * 0.3, height: 0.45 + Math.random() * 0.2

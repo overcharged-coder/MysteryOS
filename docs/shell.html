@@ -2088,11 +2088,11 @@
                     scene.fogDensity = 0.022;
                     scene.fogColor = new BABYLON.Color3(0.02, 0.04, 0.02);
                     scene.collisionsEnabled = true;
-                    scene.gravity = new BABYLON.Vector3(0, -0.4, 0);
+                    scene.gravity = new BABYLON.Vector3(0, -0.15, 0);
 
                     var camera = new BABYLON.UniversalCamera('cam', new BABYLON.Vector3(0, 1.7, -3), scene);
                     camera.setTarget(new BABYLON.Vector3(0, 1.7, 5));
-                    camera.speed = 2;
+                    camera.speed = 0.12;
                     camera.angularSensibility = 3000;
                     camera.minZ = 0.1;
                     camera.keysUp = [87]; camera.keysDown = [83];

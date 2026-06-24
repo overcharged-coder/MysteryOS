@@ -2183,33 +2183,69 @@
 
                     function createSign(text, x, y, z, rotY, w, h) {
                         var id = 'sgn' + (signId++);
-                        w = w || 3.0; h = h || 0.7;
-                        var plane = BABYLON.MeshBuilder.CreatePlane(id, {width: w, height: h}, scene);
-                        plane.position.set(x, y, z);
-                        plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+                        w = w || 2.4; h = h || 0.6;
+
+                        var parent = new BABYLON.TransformNode(id + 'p', scene);
+                        parent.position.set(x, y, z);
+
+                        // Wooden plank (slightly thick box)
+                        var plank = BABYLON.MeshBuilder.CreateBox(id + 'b', {width: w, height: h, depth: 0.06}, scene);
+                        plank.parent = parent;
+                        var plankMat = new BABYLON.StandardMaterial(id + 'pm', scene);
+                        plankMat.diffuseColor = new BABYLON.Color3(0.35, 0.22, 0.1);
+                        plankMat.emissiveColor = new BABYLON.Color3(0.12, 0.07, 0.03);
+                        plankMat.specularColor = new BABYLON.Color3(0.05, 0.03, 0.01);
+                        plank.material = plankMat;
+
+                        // Two nails
+                        for (var ni = 0; ni < 2; ni++) {
+                            var nail = BABYLON.MeshBuilder.CreateCylinder(id + 'n' + ni, {diameter: 0.06, height: 0.1}, scene);
+                            nail.parent = parent;
+                            nail.position.x = (ni === 0 ? -1 : 1) * (w * 0.4);
+                            nail.position.z = -0.04;
+                            nail.rotation.x = Math.PI / 2;
+                            var nailMat = new BABYLON.StandardMaterial(id + 'nm', scene);
+                            nailMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+                            nailMat.emissiveColor = new BABYLON.Color3(0.08, 0.08, 0.08);
+                            nail.material = nailMat;
+                        }
+
+                        // Text face
+                        var face = BABYLON.MeshBuilder.CreatePlane(id, {width: w * 0.95, height: h * 0.85}, scene);
+                        face.parent = parent;
+                        face.position.z = -0.035;
                         var tw = 512, th = 128;
                         var dt = new BABYLON.DynamicTexture(id + 'dt', {width: tw, height: th}, scene, false);
                         var mat = new BABYLON.StandardMaterial(id + 'mat', scene);
                         mat.diffuseTexture = dt; mat.emissiveTexture = dt;
-                        mat.emissiveColor = new BABYLON.Color3(0.15, 0.4, 0.15);
-                        mat.backFaceCulling = false; mat.alpha = 0.95;
+                        mat.emissiveColor = new BABYLON.Color3(0.15, 0.08, 0.04);
+                        mat.backFaceCulling = false;
                         mat.disableLighting = true;
-                        plane.material = mat;
+                        face.material = mat;
+
                         function draw(txt, color) {
                             var c = dt.getContext();
-                            c.fillStyle = '#0a0f0a'; c.fillRect(0, 0, tw, th);
-                            c.strokeStyle = '#1a3a1a'; c.lineWidth = 3;
-                            c.strokeRect(4, 4, tw - 8, th - 8);
-                            c.font = 'bold 28px monospace';
-                            c.fillStyle = color || '#44ee88';
-                            c.shadowColor = color || '#44ee88';
-                            c.shadowBlur = 12;
-                            c.fillText(txt, 14, 78);
+                            // Wood grain background
+                            c.fillStyle = '#3d2810'; c.fillRect(0, 0, tw, th);
+                            for (var gi = 0; gi < 8; gi++) {
+                                c.fillStyle = 'rgba(60,35,12,' + (0.2 + Math.random() * 0.15) + ')';
+                                var gy = Math.random() * th;
+                                c.fillRect(0, gy, tw, 2 + Math.random() * 4);
+                            }
+                            // Red text, hand-painted style
+                            c.font = 'bold 30px monospace';
+                            c.fillStyle = color || '#cc2222';
+                            c.shadowColor = '#000';
+                            c.shadowBlur = 4;
+                            c.fillText(txt, 16, 80);
                             c.shadowBlur = 0;
                             dt.update();
                         }
                         draw(text);
-                        var s = {mesh: plane, setText: function(t, c) { draw(t, c); }};
+
+                        parent.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+
+                        var s = {mesh: parent, setText: function(t, c) { draw(t, c); }};
                         allSigns.push(s);
                         return s;
                     }

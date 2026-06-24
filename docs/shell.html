@@ -2122,13 +2122,13 @@
                     BABYLON.SceneLoader.ImportMesh('', 'data/', 'Flashlight.obj', scene, function(meshes) {
                         var flRoot = new BABYLON.TransformNode('flRoot', scene);
                         flRoot.parent = camera;
-                        flRoot.position.set(0.28, -0.28, 0.4);
-                        flRoot.rotation.set(Math.PI * 0.5, 0, 0);
-                        flRoot.scaling.setAll(0.028);
+                        flRoot.position.set(0.45, -0.55, 0.3);
+                        flRoot.rotation.set(0, Math.PI, 0);
+                        flRoot.scaling.setAll(0.05);
                         meshes.forEach(function(m) {
                             m.parent = flRoot;
                             if (m.material) {
-                                m.material.emissiveColor = new BABYLON.Color3(0.15, 0.15, 0.15);
+                                m.material.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
                             }
                         });
                     });
@@ -2609,13 +2609,13 @@
                     // --- Render loop ---
                     var lastPos = camera.position.clone();
                     engine.runRenderLoop(function() {
-                        // Update flashlight to hand position (down + right + forward from camera)
+                        // Update flashlight to hand position (down + right from camera)
                         var fwd = camera.getForwardRay().direction;
                         var right = BABYLON.Vector3.Cross(fwd, BABYLON.Vector3.Up()).normalize();
                         flashSpot.position.set(
-                            camera.position.x + right.x * 0.3 - 0 * fwd.x,
-                            camera.position.y - 0.5,
-                            camera.position.z + right.z * 0.3 - 0 * fwd.z
+                            camera.position.x + right.x * 0.45 + fwd.x * 0.3,
+                            camera.position.y - 0.7,
+                            camera.position.z + right.z * 0.45 + fwd.z * 0.3
                         );
                         flashSpot.direction.copyFrom(fwd);
 

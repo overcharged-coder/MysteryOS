@@ -2251,9 +2251,17 @@
                                     inst.position.set(tp.x, 0, tp.z);
                                     inst.scaling.setAll(tp.s);
                                     inst.rotation.y = tp.ry;
-                                    inst.checkCollisions = true;
                                     inst.freezeWorldMatrix();
                                 });
+                                // cheap collision: one invisible cylinder per trunk
+                                var trunkR = 0.88 * tp.s;
+                                var trunkH = 10 * tp.s;
+                                var col = BABYLON.MeshBuilder.CreateCylinder('tCol' + i,
+                                    {height: trunkH, diameter: trunkR * 2, tessellation: 6}, scene);
+                                col.position.set(tp.x, trunkH * 0.5, tp.z);
+                                col.isVisible = false;
+                                col.checkCollisions = true;
+                                col.freezeWorldMatrix();
                             });
                             meshes.forEach(function(m) { if (m.material) m.material.freeze(); });
                         });
@@ -2528,7 +2536,7 @@
                     cursorFigure.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
                     cursorFigure.isVisible = false;
 
-                    // --- Sky eyes — static eyes scattered high above, looking down ---
+                    // --- Sky eyes — dozens of small eyes fill the sky, all tilted randomly ---
                     var skyEyeMat = new BABYLON.StandardMaterial('skyEyeMat', scene);
                     skyEyeMat.diffuseTexture = eyeTex;
                     skyEyeMat.emissiveTexture = eyeTex;
@@ -2538,20 +2546,23 @@
                     skyEyeMat.disableLighting = true;
                     skyEyeMat.backFaceCulling = false;
                     skyEyeMat.freeze();
-                    for (var ei = 0; ei < 15; ei++) {
-                        var sz = 1.5 + Math.random() * 4;
-                        var skyEye = BABYLON.MeshBuilder.CreatePlane('skyEye' + ei,
-                            {width: sz, height: sz * 0.75, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);
-                        skyEye.material = skyEyeMat;
-                        skyEye.position.set(
-                            (Math.random() - 0.5) * 80,
-                            12 + Math.random() * 18,
-                            Math.random() * 70 - 5
+                    var skyEyeBase = BABYLON.MeshBuilder.CreatePlane('skyEyeBase',
+                        {width: 1, height: 0.75, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);
+                    skyEyeBase.material = skyEyeMat;
+                    skyEyeBase.isVisible = false;
+                    for (var ei = 0; ei < 60; ei++) {
+                        var sz = 0.3 + Math.random() * 0.8;
+                        var inst = skyEyeBase.createInstance('skyEye' + ei);
+                        inst.position.set(
+                            (Math.random() - 0.5) * 120,
+                            10 + Math.random() * 25,
+                            Math.random() * 90 - 10
                         );
-                        skyEye.rotation.x = Math.PI / 2 + (Math.random() - 0.5) * 0.4;
-                        skyEye.rotation.y = Math.random() * Math.PI * 2;
-                        skyEye.rotation.z = (Math.random() - 0.5) * 0.8;
-                        skyEye.freezeWorldMatrix();
+                        inst.scaling.setAll(sz);
+                        inst.rotation.x = Math.PI / 2 + (Math.random() - 0.5) * 1.2;
+                        inst.rotation.y = Math.random() * Math.PI * 2;
+                        inst.rotation.z = (Math.random() - 0.5) * 1.4;
+                        inst.freezeWorldMatrix();
                     }
 
                     function spawnCursor() {

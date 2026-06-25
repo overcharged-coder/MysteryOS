@@ -2740,7 +2740,7 @@
                     setTimeout(function() { if (phase < 5) endScene(); }, 300000);
                 }
 
-                // Play tree transition while Babylon loads in parallel
+                // Start Babylon CDN download immediately, play transition on top
                 window._mysterySceneLock = true;
 
                 var engineReady = typeof BABYLON !== 'undefined';
@@ -2750,15 +2750,8 @@
                     if (engineReady && transitionDone) boot();
                 }
 
-                // Transition animation
-                playTreeTransition(function() {
-                    transitionDone = true;
-                    tryStart();
-                });
-
-                if (engineReady) {
-                    tryStart();
-                } else {
+                // Kick off script downloads FIRST so the network starts immediately
+                if (!engineReady) {
                     var s1 = document.createElement('script');
                     s1.src = 'https://cdn.babylonjs.com/babylon.js';
                     s1.onload = function() {
@@ -2769,6 +2762,12 @@
                     };
                     document.head.appendChild(s1);
                 }
+
+                // Then play the transition animation on top
+                playTreeTransition(function() {
+                    transitionDone = true;
+                    tryStart();
+                });
             };
         </script>
         {{{ SCRIPT }}}

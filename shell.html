@@ -997,23 +997,26 @@
                     img.src = 'data/eyefull.png';
                 }, 1500);
 
-                // Small static eyes accumulate around the screen over time
+                // Small static eyes flood the screen rapidly
                 var smallEyes = [];
                 var spawnInt = setInterval(function() {
-                    var el = document.createElement('img');
-                    el.src = 'data/eyefull.png';
-                    el.className = '_mey_small';
-                    var sz = 30 + Math.random() * 60;
-                    el.style.width = sz + 'px';
-                    el.style.height = 'auto';
-                    el.style.left = (Math.random() * 90 + 5) + 'vw';
-                    el.style.top = (Math.random() * 85 + 5) + 'vh';
-                    el.style.transform = 'rotate(' + ((Math.random() - 0.5) * 70) + 'deg)';
-                    el.style.filter = 'brightness(' + (0.5 + Math.random() * 0.5) + ')';
-                    overlay.appendChild(el);
-                    smallEyes.push(el);
-                    setTimeout(function() { el.className = '_mey_small vis'; }, 30);
-                }, 300);
+                    var batch = 2 + Math.floor(Math.random() * 3);
+                    for (var b = 0; b < batch; b++) {
+                        var el = document.createElement('img');
+                        el.src = 'data/eyefull.png';
+                        el.className = '_mey_small';
+                        var sz = 15 + Math.random() * 50;
+                        el.style.width = sz + 'px';
+                        el.style.height = 'auto';
+                        el.style.left = (Math.random() * 96 + 2) + 'vw';
+                        el.style.top = (Math.random() * 92 + 2) + 'vh';
+                        el.style.transform = 'rotate(' + ((Math.random() - 0.5) * 90) + 'deg)';
+                        el.style.filter = 'brightness(' + (0.3 + Math.random() * 0.7) + ')';
+                        overlay.appendChild(el);
+                        smallEyes.push(el);
+                        setTimeout(function(e) { e.className = '_mey_small vis'; }.bind(null, el), 10);
+                    }
+                }, 80);
 
                 // Phase 3: fade out after staring
                 setTimeout(function() {

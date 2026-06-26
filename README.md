@@ -220,3 +220,8 @@ They contain the structure of the mystery, passwords, stage injections, and majo
 MysteryOS v1 is playable now.
 
 The next focus is making the machine feel deeper, stranger, and more reactive without breaking the core puzzle path.
+
+## Credits
+
+- "Basic Desk Bundle - Low Poly (FREE)" by [Neomesh Studio](https://sketchfab.com/Neomesh_Studio) — [CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/) — [Source](https://sketchfab.com/3d-models/basic-desk-bundle-low-poly-free-d492f88bb51b4d9695cc2de205e7afa8)
+- "Desk Chair" by [KaitlinKelly](https://sketchfab.com/KaitlinK2000) — [CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/) — [Source](https://sketchfab.com/3d-models/desk-chair-4f0ac4fecf2841648f167bf851b72d2c)

@@ -3184,6 +3184,379 @@
                 }
             };
         </script>
+        <!-- SCENE: OBSERVATION LAB — skeleton at desk, watches you back -->
+        <style>
+            #_msl_overlay { display:none; position:fixed; inset:0; z-index:99999; pointer-events:auto; background:#000; }
+            #_msl_overlay.active { display:block; }
+            #_msl_canvas { width:100%; height:100%; display:block; }
+            #_msl_fade { position:absolute; inset:0; background:#000; opacity:0; transition:opacity 0.8s ease; pointer-events:none; z-index:10; }
+            #_msl_fade.active { opacity:1; }
+            #_msl_text { position:absolute; bottom:60px; left:0; right:0; text-align:center; font-family:monospace;
+                font-size:18px; color:#6a8a6a; opacity:0; transition:opacity 0.5s ease; z-index:5;
+                text-shadow:0 0 8px rgba(106,138,106,0.5); pointer-events:none; }
+        </style>
+        <div id="_msl_overlay">
+            <canvas id="_msl_canvas"></canvas>
+            <div id="_msl_fade"></div>
+            <div id="_msl_text"></div>
+        </div>
+        <script>
+            window._mysterySceneLab = function() {
+                if (window._mysterySceneLock) return;
+                window._mysterySceneLock = true;
+                var overlay = document.getElementById('_msl_overlay');
+                var cvs = document.getElementById('_msl_canvas');
+                var fade = document.getElementById('_msl_fade');
+                var textEl = document.getElementById('_msl_text');
+                if (!overlay || !cvs) { window._mysterySceneLock = false; return; }
+
+                function boot() {
+                    cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+                    overlay.className = 'active';
+
+                    var engine = new BABYLON.Engine(cvs, true);
+                    var scene = new BABYLON.Scene(engine);
+                    scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
+                    scene.ambientColor = new BABYLON.Color3(0.02, 0.02, 0.02);
+                    scene.collisionsEnabled = true;
+
+                    // Player camera — observation booth, limited movement
+                    var camera = new BABYLON.UniversalCamera('cam', new BABYLON.Vector3(0, 1.6, -2.5), scene);
+                    camera.setTarget(new BABYLON.Vector3(0, 1.4, 3));
+                    camera.speed = 0.08;
+                    camera.inertia = 0.85;
+                    camera.angularSensibility = 4000;
+                    camera.minZ = 0.05;
+                    camera.attachControl(cvs, true);
+                    cvs.addEventListener('click', function() { cvs.requestPointerLock(); });
+
+                    // --- Observation booth (player's side) ---
+                    var boothMat = new BABYLON.StandardMaterial('boothMat', scene);
+                    boothMat.diffuseColor = new BABYLON.Color3(0.06, 0.06, 0.08);
+                    boothMat.specularColor = BABYLON.Color3.Black();
+
+                    // Floor
+                    var boothFloor = BABYLON.MeshBuilder.CreateGround('bFloor', {width: 6, height: 6}, scene);
+                    boothFloor.material = boothMat;
+                    boothFloor.position.z = -2;
+
+                    // Walls
+                    var wallOpts = {width: 6, height: 3.5};
+                    var backWall = BABYLON.MeshBuilder.CreatePlane('bBack', wallOpts, scene);
+                    backWall.position.set(0, 1.75, -5); backWall.material = boothMat;
+                    var leftWall = BABYLON.MeshBuilder.CreatePlane('bLeft', wallOpts, scene);
+                    leftWall.position.set(-3, 1.75, -2); leftWall.rotation.y = Math.PI / 2; leftWall.material = boothMat;
+                    var rightWall = BABYLON.MeshBuilder.CreatePlane('bRight', wallOpts, scene);
+                    rightWall.position.set(3, 1.75, -2); rightWall.rotation.y = -Math.PI / 2; rightWall.material = boothMat;
+                    var ceiling = BABYLON.MeshBuilder.CreatePlane('bCeil', {width: 6, height: 6}, scene);
+                    ceiling.position.set(0, 3.5, -2); ceiling.rotation.x = Math.PI / 2; ceiling.material = boothMat;
+
+                    // --- Glass panel at z=0 ---
+                    var glassMat = new BABYLON.StandardMaterial('glassMat', scene);
+                    glassMat.diffuseColor = new BABYLON.Color3(0.15, 0.2, 0.2);
+                    glassMat.specularColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+                    glassMat.alpha = 0.15;
+                    glassMat.backFaceCulling = false;
+                    var glass = BABYLON.MeshBuilder.CreatePlane('glass', {width: 6, height: 3.5, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);
+                    glass.position.set(0, 1.75, 0);
+                    glass.material = glassMat;
+
+                    // --- Lab room (other side of glass) ---
+                    var labMat = new BABYLON.StandardMaterial('labMat', scene);
+                    labMat.diffuseColor = new BABYLON.Color3(0.85, 0.85, 0.82);
+                    labMat.specularColor = BABYLON.Color3.Black();
+
+                    var labFloor = BABYLON.MeshBuilder.CreateGround('lFloor', {width: 8, height: 10}, scene);
+                    labFloor.material = labMat; labFloor.position.z = 5;
+                    var labBack = BABYLON.MeshBuilder.CreatePlane('lBack', {width: 8, height: 3.5}, scene);
+                    labBack.position.set(0, 1.75, 10); labBack.material = labMat;
+                    var labLeft = BABYLON.MeshBuilder.CreatePlane('lLeft', {width: 10, height: 3.5}, scene);
+                    labLeft.position.set(-4, 1.75, 5); labLeft.rotation.y = Math.PI / 2; labLeft.material = labMat;
+                    var labRight = BABYLON.MeshBuilder.CreatePlane('lRight', {width: 10, height: 3.5}, scene);
+                    labRight.position.set(4, 1.75, 5); labRight.rotation.y = -Math.PI / 2; labRight.material = labMat;
+                    var labCeil = BABYLON.MeshBuilder.CreatePlane('lCeil', {width: 8, height: 10}, scene);
+                    labCeil.position.set(0, 3.5, 5); labCeil.rotation.x = Math.PI / 2; labCeil.material = labMat;
+
+                    // --- Lighting ---
+                    // Dim booth light
+                    var boothLight = new BABYLON.PointLight('boothL', new BABYLON.Vector3(0, 3, -2), scene);
+                    boothLight.intensity = 0.3;
+                    boothLight.diffuse = new BABYLON.Color3(0.4, 0.5, 0.6);
+
+                    // Harsh fluorescent in the lab
+                    var labLight = new BABYLON.PointLight('labL', new BABYLON.Vector3(0, 3.2, 5), scene);
+                    labLight.intensity = 1.5;
+                    labLight.diffuse = new BABYLON.Color3(0.9, 0.95, 1.0);
+
+                    // --- Load models ---
+                    var skeletonRoot = null;
+                    var modelsLoaded = 0;
+                    var totalModels = 4;
+
+                    function onModelLoaded() {
+                        modelsLoaded++;
+                    }
+
+                    // Desk + computer
+                    BABYLON.SceneLoader.ImportMesh('', 'data/', 'desk-comp.gltf', scene, function(meshes) {
+                        var root = meshes[0] || new BABYLON.TransformNode('deskRoot', scene);
+                        // desk-comp is huge (~48x86 units), scale to ~1.5m wide
+                        var sc = 0.032;
+                        meshes.forEach(function(m) {
+                            if (!m.parent || m.parent === root) m.parent = root;
+                        });
+                        root.scaling.setAll(sc);
+                        root.position.set(0, 0, 6);
+                        root.rotation.y = Math.PI;
+                        onModelLoaded();
+                    });
+
+                    // Chair
+                    BABYLON.SceneLoader.ImportMesh('', 'data/', 'chair.gltf', scene, function(meshes) {
+                        var root = meshes[0] || new BABYLON.TransformNode('chairRoot', scene);
+                        meshes.forEach(function(m) {
+                            if (!m.parent || m.parent === root) m.parent = root;
+                        });
+                        root.scaling.setAll(0.65);
+                        root.position.set(0, 0, 4.5);
+                        root.rotation.y = Math.PI;
+                        onModelLoaded();
+                    });
+
+                    // Ceiling light fixture
+                    BABYLON.SceneLoader.ImportMesh('', 'data/', 'light.gltf', scene, function(meshes) {
+                        var root = meshes[0] || new BABYLON.TransformNode('lightRoot', scene);
+                        meshes.forEach(function(m) {
+                            if (!m.parent || m.parent === root) m.parent = root;
+                            if (m.material) {
+                                m.material.emissiveColor = new BABYLON.Color3(0.8, 0.85, 0.9);
+                            }
+                        });
+                        root.scaling.setAll(0.4);
+                        root.position.set(0, 3.45, 5);
+                        onModelLoaded();
+                    });
+
+                    // Skeleton figure
+                    BABYLON.SceneLoader.ImportMesh('', 'data/', 'skeleton.gltf', scene, function(meshes) {
+                        skeletonRoot = meshes[0] || new BABYLON.TransformNode('skelRoot', scene);
+                        meshes.forEach(function(m) {
+                            if (!m.parent || m.parent === skeletonRoot) m.parent = skeletonRoot;
+                        });
+                        // 183 units tall -> scale to ~1.7m
+                        skeletonRoot.scaling.setAll(0.0093);
+                        skeletonRoot.position.set(0, 0, 4.8);
+                        skeletonRoot.rotation.y = Math.PI;
+                        onModelLoaded();
+                    });
+
+                    // --- Audio ---
+                    var actx = new (window.AudioContext || window.webkitAudioContext)();
+                    if (actx.state === 'suspended') actx.resume();
+
+                    // Fluorescent hum
+                    var hum = actx.createOscillator();
+                    hum.type = 'sawtooth'; hum.frequency.value = 120;
+                    var humGain = actx.createGain(); humGain.gain.value = 0.02;
+                    var humFilt = actx.createBiquadFilter(); humFilt.type = 'bandpass'; humFilt.frequency.value = 120; humFilt.Q.value = 12;
+                    hum.connect(humFilt); humFilt.connect(humGain); humGain.connect(actx.destination); hum.start();
+
+                    // Typing clicks
+                    var typingActive = true;
+                    var typingInt = setInterval(function() {
+                        if (!typingActive) return;
+                        if (Math.random() > 0.4) return;
+                        var bl = Math.floor(actx.sampleRate * 0.012);
+                        var tb = actx.createBuffer(1, bl, actx.sampleRate);
+                        var td = tb.getChannelData(0);
+                        for (var k = 0; k < bl; k++) td[k] = (Math.random() * 2 - 1) * Math.exp(-k / (bl * 0.06));
+                        var tn = actx.createBufferSource(); tn.buffer = tb;
+                        var tg = actx.createGain(); tg.gain.value = 0.04;
+                        tn.connect(tg); tg.connect(actx.destination);
+                        tn.start(); tn.stop(actx.currentTime + 0.02);
+                    }, 120);
+
+                    // --- Scene phases ---
+                    var phase = 0;
+                    var phaseTimer = 0;
+                    var sceneStart = performance.now();
+
+                    // Phase timing (ms from scene start)
+                    var PHASE_OBSERVE = 0;       // just watching
+                    var PHASE_RECOGNIZE = 8000;  // text shows player actions
+                    var PHASE_AWARE = 18000;     // skeleton stops, turns
+                    var PHASE_APPROACH = 24000;  // skeleton walks to glass
+                    var PHASE_FINALE = 30000;    // glass cracks, end
+
+                    // Player session data for the monitor text
+                    var sessionLines = [];
+                    try {
+                        var al = window.Module && Module.ccall ? Module.ccall('mysteryos_get_activity_summary', 'string', [], []) : '';
+                        if (al) sessionLines = al.split('\n');
+                    } catch(e) {}
+                    if (sessionLines.length < 3) {
+                        sessionLines = [
+                            '> open /Desktop/README.txt',
+                            '> cat batch_7_raw.txt',
+                            '> unlock mirror',
+                            '> tree /System/Archive',
+                            '> open observation_log.txt',
+                            '> search 7741'
+                        ];
+                    }
+
+                    // Monitor screen plane (shows player actions)
+                    var monDt = new BABYLON.DynamicTexture('monDt', {width: 512, height: 384}, scene, false);
+                    var monMat = new BABYLON.StandardMaterial('monMat', scene);
+                    monMat.emissiveTexture = monDt;
+                    monMat.emissiveColor = new BABYLON.Color3(0.6, 0.9, 0.6);
+                    monMat.disableLighting = true;
+                    monMat.backFaceCulling = false;
+                    var monPlane = BABYLON.MeshBuilder.CreatePlane('monScr', {width: 0.38, height: 0.28}, scene);
+                    monPlane.position.set(0.02, 1.22, 5.55);
+                    monPlane.rotation.y = Math.PI;
+                    monPlane.material = monMat;
+
+                    var monLineIdx = 0;
+                    var monLines = [];
+                    function drawMonitor() {
+                        var c = monDt.getContext();
+                        c.fillStyle = '#0a140a';
+                        c.fillRect(0, 0, 512, 384);
+                        c.font = '14px monospace';
+                        c.fillStyle = '#4a8a4a';
+                        var startLine = Math.max(0, monLines.length - 18);
+                        for (var i = startLine; i < monLines.length; i++) {
+                            c.fillText(monLines[i - startLine] !== undefined ? monLines[i] : '', 12, 20 + (i - startLine) * 20);
+                        }
+                        // Blinking cursor
+                        if (performance.now() % 1000 < 500) {
+                            c.fillStyle = '#6aca6a';
+                            c.fillRect(12, 20 + (monLines.length - startLine) * 20 - 12, 8, 14);
+                        }
+                        monDt.update();
+                    }
+
+                    // Feed session lines to the monitor over time
+                    var monFeedInt = setInterval(function() {
+                        if (phase >= 2) return;
+                        if (monLineIdx < sessionLines.length) {
+                            monLines.push(sessionLines[monLineIdx++]);
+                        }
+                    }, 2500);
+
+                    // --- Render loop ---
+                    engine.runRenderLoop(function() {
+                        var elapsed = performance.now() - sceneStart;
+
+                        // Phase transitions
+                        if (phase === 0 && elapsed > PHASE_RECOGNIZE) {
+                            phase = 1;
+                            textEl.textContent = 'that session looks familiar.';
+                            textEl.style.opacity = '1';
+                            setTimeout(function() { textEl.style.opacity = '0'; }, 3000);
+                        }
+
+                        if (phase === 1 && elapsed > PHASE_AWARE) {
+                            phase = 2;
+                            typingActive = false;
+                            // Skeleton turns to face the glass
+                            textEl.textContent = 'it stopped.';
+                            textEl.style.opacity = '1';
+                            setTimeout(function() { textEl.style.opacity = '0'; }, 2500);
+                        }
+
+                        if (phase === 2 && skeletonRoot) {
+                            // Slowly rotate skeleton toward glass (toward -Z)
+                            var targetRot = 0;
+                            var rotSpeed = 0.008;
+                            var diff = targetRot - skeletonRoot.rotation.y;
+                            if (Math.abs(diff) > 0.01) {
+                                skeletonRoot.rotation.y += diff * rotSpeed;
+                            }
+                        }
+
+                        if (phase === 2 && elapsed > PHASE_APPROACH) {
+                            phase = 3;
+                            textEl.textContent = '';
+                            // Flicker lights
+                            var flickerCount = 0;
+                            var flickerInt = setInterval(function() {
+                                labLight.intensity = Math.random() > 0.5 ? 1.5 : 0.1;
+                                flickerCount++;
+                                if (flickerCount > 12) {
+                                    clearInterval(flickerInt);
+                                    labLight.intensity = 0.4;
+                                }
+                            }, 100);
+                        }
+
+                        if (phase === 3 && skeletonRoot) {
+                            // Walk skeleton toward glass
+                            if (skeletonRoot.position.z > 0.5) {
+                                skeletonRoot.position.z -= 0.015;
+                            } else if (phase === 3) {
+                                phase = 4;
+                                // Right at the glass — scare
+                                labLight.intensity = 0;
+                                window._mysteryEyeFlash && window._mysteryEyeFlash(300);
+                                textEl.textContent = 'it sees you.';
+                                textEl.style.color = '#cc3333';
+                                textEl.style.opacity = '1';
+                                // Glass crack effect — change material
+                                glassMat.emissiveColor = new BABYLON.Color3(0.4, 0.1, 0.1);
+                                glassMat.alpha = 0.5;
+
+                                setTimeout(function() {
+                                    // End scene
+                                    fade.className = 'active';
+                                    setTimeout(endScene, 800);
+                                }, 2500);
+                            }
+                        }
+
+                        drawMonitor();
+                        scene.render();
+                    });
+
+                    var onResize = function() { engine.resize(); };
+                    window.addEventListener('resize', onResize);
+
+                    function endScene() {
+                        window.removeEventListener('resize', onResize);
+                        clearInterval(typingInt);
+                        clearInterval(monFeedInt);
+                        engine.stopRenderLoop();
+                        scene.dispose(); engine.dispose();
+                        try { hum.stop(); } catch(e) {}
+                        try { actx.close(); } catch(e) {}
+                        overlay.className = '';
+                        fade.className = ''; fade.style.opacity = '';
+                        textEl.textContent = ''; textEl.style.color = ''; textEl.style.opacity = '0';
+                        window._mysterySceneLock = false;
+                    }
+
+                    setTimeout(function() { if (phase < 4) endScene(); }, 120000);
+                }
+
+                // Lazy-load Babylon.js if needed
+                if (typeof BABYLON !== 'undefined') {
+                    boot();
+                } else {
+                    overlay.className = 'active';
+                    var s1 = document.createElement('script');
+                    s1.src = 'https://cdn.babylonjs.com/babylon.js';
+                    s1.onload = function() {
+                        var s2 = document.createElement('script');
+                        s2.src = 'https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js';
+                        s2.onload = function() { boot(); };
+                        document.head.appendChild(s2);
+                    };
+                    document.head.appendChild(s1);
+                }
+            };
+        </script>
+
         {{{ SCRIPT }}}
     </body>
 </html>

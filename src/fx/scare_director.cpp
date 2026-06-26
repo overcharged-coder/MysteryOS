@@ -196,6 +196,11 @@ void ScareDirector::on_stage_unlock(int stage, float now) {
         add(ScareKind::SceneForest, now + 2.0f, 180.0f, 1.0f);
     }
 
+    if (stage >= 3 && !scene_lab_triggered_) {
+        scene_lab_triggered_ = true;
+        add(ScareKind::SceneLab, now + 2.5f, 120.0f, 1.0f);
+    }
+
     if (stage >= 4 && !stage4_unlock_hit_) {
         stage4_unlock_hit_ = true;
         add(ScareKind::FakeError, now, 2.0f, 0.9f, "UNAUTHORIZED USER BRANCH MOUNTED");
@@ -424,6 +429,12 @@ void ScareDirector::render(float now) {
                 snprintf(buf, sizeof(buf), "window._mysteryNightmareFlash && window._mysteryNightmareFlash(%d)", (int)(scare.duration * 1000));
                 emscripten_run_script(buf);
             }
+        } else if (scare.kind == ScareKind::SceneLab) {
+            if (!scare.launched) {
+                scare.launched = true;
+                emscripten_run_script("window._mysterySceneLab && window._mysterySceneLab()");
+            }
+            dl->AddRectFilled({0, 0}, disp, IM_COL32(0, 0, 0, 255));
         }
     }
 }

@@ -20,7 +20,8 @@ enum class ScareKind {
     SceneInterview,
     SceneWalk,
     NightmareFlash,
-    SceneForest
+    SceneForest,
+    SceneLab
 };
 
 enum class ScareSound {
@@ -75,6 +76,7 @@ class ScareDirector {
         bool camera_checks_triggered_ = false;
         bool one_byte_triggered_ = false;
         bool scene_forest_triggered_ = false;
+        bool scene_lab_triggered_ = false;
 
         bool stage4_unlock_hit_ = false;
         bool stage5_unlock_hit_ = false;

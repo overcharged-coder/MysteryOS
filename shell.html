@@ -2811,28 +2811,91 @@
                             pathEl.style.color = '#aa4040';
                         }, 1000);
                         setTimeout(function() {
+                            // White flash
                             fade.style.background = '#fff';
                             fade.className = 'active';
-                            setTimeout(endScene, 400);
-                        }, 2800);
-                    }
+                            setTimeout(function() {
+                                // Kill the 3D but keep overlay
+                                window.removeEventListener('keydown', onKey);
+                                window.removeEventListener('resize', onResize);
+                                clearInterval(typingInt);
+                                engine.stopRenderLoop();
+                                scene.dispose(); engine.dispose();
+                                try { drone.stop(); } catch(e) {}
+                                try { windSrc.stop(); } catch(e) {}
+                                try { actx.close(); } catch(e) {}
+                                promptEl.textContent = ''; pathEl.textContent = '';
+                                pathEl.style.color = '';
 
-                    // --- Cleanup ---
-                    function endScene() {
-                        window.removeEventListener('keydown', onKey);
-                        window.removeEventListener('resize', onResize);
-                        clearInterval(typingInt);
-                        engine.stopRenderLoop();
-                        scene.dispose(); engine.dispose();
-                        try { drone.stop(); } catch(e) {}
-                        try { windSrc.stop(); } catch(e) {}
-                        try { actx.close(); } catch(e) {}
-                        overlay.className = '';
-                        fade.className = ''; fade.style.background = '#000';
-                        promptEl.textContent = ''; pathEl.textContent = '';
-                        pathEl.style.color = '';
-                        loadingEl.style.display = '';
-                        window._mysterySceneLock = false;
+                                // --- Reverse terminal dissolve ---
+                                fade.style.background = '#000';
+                                var exitOv = document.createElement('div');
+                                Object.assign(exitOv.style, {
+                                    position: 'fixed', inset: '0', zIndex: '100000',
+                                    background: '#000', overflow: 'hidden',
+                                    fontFamily: "'Courier New', Courier, monospace",
+                                    fontSize: '14px', lineHeight: '1.65',
+                                    color: '#2a5a2a', padding: '28px 32px',
+                                    boxSizing: 'border-box', whiteSpace: 'pre'
+                                });
+                                document.body.appendChild(exitOv);
+
+                                var GLYPHS = '│├└──┼║╠╣█▓░┐┘┌╔╗╚╝';
+                                var COLS = 78, ROWS = 32;
+
+                                // Phase A: dense green tree chars dissolving to sparse (1.5s)
+                                var tick = 0, TICKS = 35;
+                                var exitId = setInterval(function() {
+                                    var progress = tick / TICKS;
+                                    var density = 1.0 - progress;
+                                    var out = '';
+                                    for (var r = 0; r < ROWS; r++) {
+                                        for (var c = 0; c < COLS; c++) {
+                                            out += Math.random() < density
+                                                ? GLYPHS[Math.floor(Math.random() * GLYPHS.length)]
+                                                : ' ';
+                                        }
+                                        out += '\n';
+                                    }
+                                    exitOv.textContent = out;
+                                    var g = Math.round(90 - progress * 60);
+                                    exitOv.style.color = 'rgb(' + Math.round(g*0.3) + ',' + g + ',' + Math.round(g*0.3) + ')';
+                                    if (++tick >= TICKS) {
+                                        clearInterval(exitId);
+                                        // Phase B: shrink to terminal output (1s)
+                                        exitOv.textContent = '';
+                                        exitOv.style.color = '#6a8a6a';
+                                        var retLines = [
+                                            'tree scan complete.',
+                                            'objects found: 47',
+                                            'anomalies: 1',
+                                            '',
+                                            'returning to session...'
+                                        ];
+                                        var li = 0;
+                                        var retId = setInterval(function() {
+                                            if (li < retLines.length) {
+                                                exitOv.textContent += retLines[li++] + '\n';
+                                            } else {
+                                                clearInterval(retId);
+                                                setTimeout(function() {
+                                                    exitOv.style.transition = 'opacity 0.6s ease';
+                                                    exitOv.style.opacity = '0';
+                                                    setTimeout(function() {
+                                                        exitOv.remove();
+                                                        overlay.className = '';
+                                                        fade.className = '';
+                                                        fade.style.background = '#000';
+                                                        loadingEl.style.display = '';
+                                                        window._mysterySceneLock = false;
+                                                    }, 700);
+                                                }, 600);
+                                            }
+                                        }, 120);
+                                    }
+                                }, 42);
+                            }, 500);
+                        }, 2800);
                     }
 
                     // --- Render loop ---

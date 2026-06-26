@@ -15,6 +15,9 @@
 
 using namespace std;
 
+static string quoted_js_string(const string& value);
+static void notify(const string& sender, const string& msg, const string& color = "#5a5", int glitch = 0, int duration = 4500);
+
 bool Kernel::init() {
     if (!vfs_.load("/data/filesystem.json")) return false;
     if (!puzzle_.load("/data/puzzles.json")) return false;
@@ -32,6 +35,18 @@ bool Kernel::init() {
             "}",
             freq, gain);
         emscripten_run_script(js);
+
+        if (u.stage == 1) {
+            notify("System", "Stage 1 unlocked: /System/Archive", "#5a8a5a", 0);
+        } else if (u.stage == 2) {
+            notify("Session Monitor", "New directories available. Proceed with caution.", "#8a8a4a", 1);
+        } else if (u.stage == 3) {
+            notify("Network", "External connection established. Source: unknown.", "#aa7a3a", 3, 5000);
+        } else if (u.stage == 4) {
+            notify("PID 7741", "you are getting closer to something.", "#aa4a3a", 5, 5500);
+        } else if (u.stage == 5) {
+            notify("[REDACTED]", "there is a folder with your name in it.", "#cc2222", 7, 6000);
+        }
     });
     emscripten_run_script(
         "window._mysteryOsc = (function(){"
@@ -98,6 +113,16 @@ static string quoted_js_string(const string& value) {
     }
     out << '"';
     return out.str();
+}
+
+static void notify(const string& sender, const string& msg, const string& color, int glitch, int duration) {
+    char js[512];
+    snprintf(js, sizeof(js),
+        "window._mysteryNotify&&window._mysteryNotify({sender:%s,msg:%s,color:'%s',glitch:%d,duration:%d})",
+        quoted_js_string(sender).c_str(),
+        quoted_js_string(msg).c_str(),
+        color.c_str(), glitch, duration);
+    emscripten_run_script(js);
 }
 
 static bool is_allowed_anomaly_path(const string& path) {
@@ -334,6 +359,7 @@ void Kernel::render_boot() {
         float t = boot_fadeout_timer_ / BOOT_FADEOUT_DURATION;
         if (t >= 1.0f) {
             booting_ = false;
+            notify("System", "Welcome back, evoss. 3 unread files on Desktop.", "#6a8a6a", 0, 6000);
             return;
         }
         dl->AddRectFilled({0, 0}, disp, IM_COL32(0, 0, 0, 255));
@@ -395,6 +421,31 @@ void Kernel::record_file_open(const string& path, const string& source) {
             show_error_popup_ = true;
             error_popup_msg_ = MSGS[i];
         }
+    }
+
+    // Milestone notifications — escalating tone and corruption
+    if (files_opened_ == 3) {
+        notify("File Explorer", "Tip: Use the terminal for faster navigation. Type 'help' for commands.", "#6a8a6a", 0, 5000);
+    } else if (files_opened_ == 5) {
+        notify("Session Monitor", "File access logged.", "#8a8a5a", 0, 3500);
+    } else if (files_opened_ == 12) {
+        notify("Session Monitor", "Unusual read pattern detected.", "#aa8a3a", 1, 4000);
+    } else if (files_opened_ == 25) {
+        notify("Network", "Inbound connection from 10.0.0.???", "#aa6a3a", 2, 4500);
+    } else if (files_opened_ == 45) {
+        notify("PID 7741", "you read faster than i expected.", "#aa3a3a", 4, 5000);
+    } else if (files_opened_ == 80) {
+        notify("???", "stop looking.", "#cc2222", 6, 4000);
+    } else if (files_opened_ == 130) {
+        notify("[no sender]", "i can see the screen from here.", "#ff3333", 8, 5000);
+    }
+
+    // Context-specific notifications
+    if (path.find("/System/logs/") == 0 && files_opened_ > 6) {
+        notify("Session Monitor", "Log file accessed. Activity recorded.", "#8a8a5a", puzzle_.stage(), 3500);
+    }
+    if (path.find("deleted") != string::npos || path.find("redacted") != string::npos) {
+        notify("File System", "This file was marked for deletion.", "#aa6a3a", puzzle_.stage() + 1, 4000);
     }
 
     VFSNode* node = vfs_.get(path);

@@ -214,6 +214,120 @@
                 }
             };
         </script>
+        <!-- Notification toast system -->
+        <style>
+            #_mn_container {
+                position: fixed;
+                top: 12px;
+                right: 12px;
+                z-index: 99990;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                pointer-events: none;
+                max-width: 320px;
+            }
+            ._mn_toast {
+                background: rgba(18, 18, 18, 0.92);
+                border: 1px solid rgba(80, 80, 80, 0.4);
+                border-left: 3px solid #5a5;
+                border-radius: 6px;
+                padding: 10px 14px;
+                font-family: 'Segoe UI', system-ui, sans-serif;
+                font-size: 12.5px;
+                color: #c8c8c8;
+                backdrop-filter: blur(8px);
+                transform: translateX(120%);
+                transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+                opacity: 0;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            }
+            ._mn_toast.show { transform: translateX(0); opacity: 1; }
+            ._mn_toast.hide { transform: translateX(120%); opacity: 0; }
+            ._mn_sender {
+                font-size: 11px;
+                font-weight: 600;
+                margin-bottom: 3px;
+                letter-spacing: 0.3px;
+            }
+            ._mn_body {
+                line-height: 1.45;
+                opacity: 0.85;
+            }
+        </style>
+        <div id="_mn_container"></div>
+        <script>
+            (function() {
+                var container = document.getElementById('_mn_container');
+                var NOISE = '@#$%!?*~^&░▓█┼╫';
+
+                window._mysteryNotify = function(opts) {
+                    var sender = opts.sender || 'System';
+                    var msg = opts.msg || '';
+                    var color = opts.color || '#5a5';
+                    var duration = opts.duration || 4500;
+                    var glitch = opts.glitch || 0;
+
+                    // Mangle text based on glitch level (0-10)
+                    if (glitch > 0) {
+                        var rate = glitch * 0.06;
+                        var mangled = '';
+                        var src = sender + '|' + msg;
+                        for (var i = 0; i < src.length; i++) {
+                            if (src[i] !== '|' && src[i] !== '\n' && Math.random() < rate) {
+                                mangled += NOISE[Math.floor(Math.random() * NOISE.length)];
+                            } else {
+                                mangled += src[i];
+                            }
+                        }
+                        var parts = mangled.split('|');
+                        sender = parts[0];
+                        msg = parts[1] || msg;
+                    }
+
+                    var toast = document.createElement('div');
+                    toast.className = '_mn_toast';
+                    toast.style.borderLeftColor = color;
+
+                    var senderEl = document.createElement('div');
+                    senderEl.className = '_mn_sender';
+                    senderEl.style.color = color;
+                    senderEl.textContent = sender;
+
+                    var bodyEl = document.createElement('div');
+                    bodyEl.className = '_mn_body';
+                    bodyEl.textContent = msg;
+
+                    toast.appendChild(senderEl);
+                    toast.appendChild(bodyEl);
+                    container.appendChild(toast);
+
+                    // Glitch effects on the toast itself
+                    if (glitch >= 4) {
+                        toast.style.animation = 'none';
+                        var jitterInt = setInterval(function() {
+                            var jx = ((Math.random() - 0.5) * glitch * 0.8).toFixed(1);
+                            toast.style.transform = 'translateX(' + jx + 'px)';
+                        }, 80);
+                    }
+                    if (glitch >= 7) {
+                        toast.style.borderColor = color;
+                        toast.style.boxShadow = '0 0 12px ' + color + ', 0 4px 16px rgba(0,0,0,0.5)';
+                    }
+
+                    requestAnimationFrame(function() {
+                        requestAnimationFrame(function() { toast.className = '_mn_toast show'; });
+                    });
+
+                    setTimeout(function() {
+                        toast.className = '_mn_toast hide';
+                        if (typeof jitterInt !== 'undefined') clearInterval(jitterInt);
+                        setTimeout(function() { toast.remove(); }, 400);
+                    }, duration);
+                };
+            })();
+        </script>
+
         <script>
             window._mysterySceneLock = false;
             document.addEventListener('click', function() {
@@ -2454,9 +2568,42 @@
                         }
                         draw(text);
 
-                        var s = {mesh: face, setText: function(t, c) { draw(t, c); }};
+                        var s = {mesh: face, mat: mat, x: x, z: z, setText: function(t, c) { draw(t, c); }};
                         allSigns.push(s);
                         return s;
+                    }
+
+                    // --- Path particles: green data-sparks along the correct route ---
+                    // Waypoints define the correct path: clearing -> /System -> fork -> /Archive -> MIRROR
+                    var pathWaypoints = [
+                        {x:0, z:-2}, {x:0, z:5}, {x:0, z:12}, {x:0, z:20},
+                        {x:0, z:30}, {x:0, z:38}, {x:2, z:42}, {x:5, z:46},
+                        {x:8, z:50}, {x:10, z:55}, {x:11, z:60}, {x:12, z:64}
+                    ];
+                    var sparkMat = new BABYLON.StandardMaterial('sparkMat', scene);
+                    sparkMat.emissiveColor = new BABYLON.Color3(0.1, 0.5, 0.15);
+                    sparkMat.disableLighting = true;
+                    sparkMat.fogEnabled = false;
+                    sparkMat.alpha = 0.6;
+                    var sparkBase = BABYLON.MeshBuilder.CreatePlane('sparkBase',
+                        {width: 0.08, height: 0.08, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);
+                    sparkBase.material = sparkMat;
+                    sparkBase.isVisible = false;
+                    var sparks = [];
+                    // Scatter sparks along the path segments
+                    for (var wi = 0; wi < pathWaypoints.length - 1; wi++) {
+                        var wa = pathWaypoints[wi], wb = pathWaypoints[wi + 1];
+                        var segLen = Math.sqrt((wb.x - wa.x) * (wb.x - wa.x) + (wb.z - wa.z) * (wb.z - wa.z));
+                        var count = Math.max(3, Math.floor(segLen * 1.2));
+                        for (var si = 0; si < count; si++) {
+                            var t = si / count;
+                            var sx = wa.x + (wb.x - wa.x) * t + (Math.random() - 0.5) * 1.5;
+                            var sz = wa.z + (wb.z - wa.z) * t + (Math.random() - 0.5) * 1.5;
+                            var inst = sparkBase.createInstance('spark_' + wi + '_' + si);
+                            inst.position.set(sx, 0.1 + Math.random() * 0.3, sz);
+                            inst.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+                            sparks.push({mesh: inst, baseY: inst.position.y, phase: Math.random() * Math.PI * 2});
+                        }
                     }
 
                     // --- Forest generation ---
@@ -2720,6 +2867,33 @@
                         }
                     }
 
+                    function wrongPathEscalation(cb) {
+                        wrongCount++;
+                        // Escalate atmosphere based on how many wrong turns
+                        var darkAmount = Math.min(wrongCount * 0.008, 0.03);
+                        scene.fogDensity += darkAmount;
+                        droneGain.gain.linearRampToValueAtTime(
+                            Math.min(0.025 + wrongCount * 0.012, 0.09), actx.currentTime + 0.5);
+                        // Brief red flash + screen shake before teleport
+                        fade.style.background = '#200000';
+                        fade.className = 'active';
+                        // Warning messages that escalate
+                        var warnings = [
+                            'wrong path.', 'you are going the wrong way.',
+                            'stop.', 'i said stop.', 'you are not listening.'
+                        ];
+                        pathEl.textContent = warnings[Math.min(wrongCount - 1, warnings.length - 1)];
+                        pathEl.style.color = '#cc3333';
+                        setTimeout(function() {
+                            fade.style.background = '#000';
+                            setTimeout(function() {
+                                cb();
+                                pathEl.style.color = '';
+                                setTimeout(function() { fade.className = ''; }, 600);
+                            }, 400);
+                        }, 1200);
+                    }
+
                     function fadeAndTeleport(x, z, cb) {
                         fade.className = 'active';
                         setTimeout(function() {
@@ -2745,14 +2919,22 @@
                                 if (phase < 1) phase = 1;
                                 break;
                             case 'dead_documents':
-                                wrongCount++;
                                 deadDocSign.setText('not yet');
-                                fadeAndTeleport(0, -3, function() { pathEl.textContent = '/'; });
+                                wrongPathEscalation(function() {
+                                    camera.position.set(0, 1.7, -3);
+                                    camera.setTarget(new BABYLON.Vector3(0, 1.7, 5));
+                                    resetWalkZones();
+                                    pathEl.textContent = '/';
+                                });
                                 break;
                             case 'dead_desktop':
-                                wrongCount++;
                                 monitorSign.setText('i have not written that yet');
-                                fadeAndTeleport(0, -3, function() { pathEl.textContent = '/'; });
+                                wrongPathEscalation(function() {
+                                    camera.position.set(0, 1.7, -3);
+                                    camera.setTarget(new BABYLON.Vector3(0, 1.7, 5));
+                                    resetWalkZones();
+                                    pathEl.textContent = '/';
+                                });
                                 break;
                             case 'system_fork':
                                 if (phase < 2) {
@@ -2764,9 +2946,13 @@
                                 }
                                 break;
                             case 'dead_logs':
-                                wrongCount++;
                                 deadLogsSign.setText('wrong branch');
-                                fadeAndTeleport(0, 36, function() { pathEl.textContent = '/System'; });
+                                wrongPathEscalation(function() {
+                                    camera.position.set(0, 1.7, 36);
+                                    camera.setTarget(new BABYLON.Vector3(0, 1.7, 41));
+                                    resetWalkZones();
+                                    pathEl.textContent = '/System';
+                                });
                                 break;
                             case 'enter_archive':
                                 if (phase < 3) {
@@ -2941,6 +3127,26 @@
                             eMat.emissiveColor.r = 0.7 + Math.sin(gt * 3) * 0.3;
                             eMat.alpha = 0.6 + Math.sin(gt * 2.5) * 0.3;
                             ePlane.position.y = 4 + Math.sin(gt * 1.2) * 0.3;
+                        }
+                        // Spark animation — bob and flicker
+                        for (var si = 0; si < sparks.length; si++) {
+                            var sp = sparks[si];
+                            sp.mesh.position.y = sp.baseY + Math.sin(gt * 1.5 + sp.phase) * 0.12;
+                            sp.mesh.scaling.setAll(0.6 + Math.sin(gt * 3 + sp.phase * 2) * 0.4);
+                        }
+                        // Sign proximity glow — pulse red when player is within 18 units
+                        var px = camera.position.x, pz = camera.position.z;
+                        for (var si = 0; si < allSigns.length; si++) {
+                            var sg = allSigns[si];
+                            if (!sg.mat) continue;
+                            var sdx = px - sg.x, sdz = pz - sg.z;
+                            var sd = Math.sqrt(sdx * sdx + sdz * sdz);
+                            if (sd < 18) {
+                                var glow = (1 - sd / 18) * (0.3 + Math.sin(gt * 2.5 + si) * 0.15);
+                                sg.mat.emissiveColor = new BABYLON.Color3(glow, glow * 0.15, glow * 0.1);
+                            } else {
+                                sg.mat.emissiveColor = BABYLON.Color3.Black();
+                            }
                         }
                     });
 

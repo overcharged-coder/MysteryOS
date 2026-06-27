@@ -3236,20 +3236,20 @@
                     boothMat.specularColor = BABYLON.Color3.Black();
 
                     // Floor
-                    var boothFloor = BABYLON.MeshBuilder.CreateGround('bFloor', {width: 6, height: 6}, scene);
+                    var boothFloor = BABYLON.MeshBuilder.CreateGround('bFloor', {width: 10, height: 6}, scene);
                     boothFloor.material = boothMat;
-                    boothFloor.position.z = -2;
+                    boothFloor.position.z = -3;
 
                     // Walls
-                    var wallOpts = {width: 6, height: 3.5};
+                    var wallOpts = {width: 10, height: 4};
                     var backWall = BABYLON.MeshBuilder.CreatePlane('bBack', wallOpts, scene);
-                    backWall.position.set(0, 1.75, -5); backWall.material = boothMat;
-                    var leftWall = BABYLON.MeshBuilder.CreatePlane('bLeft', wallOpts, scene);
-                    leftWall.position.set(-3, 1.75, -2); leftWall.rotation.y = Math.PI / 2; leftWall.material = boothMat;
-                    var rightWall = BABYLON.MeshBuilder.CreatePlane('bRight', wallOpts, scene);
-                    rightWall.position.set(3, 1.75, -2); rightWall.rotation.y = -Math.PI / 2; rightWall.material = boothMat;
-                    var ceiling = BABYLON.MeshBuilder.CreatePlane('bCeil', {width: 6, height: 6}, scene);
-                    ceiling.position.set(0, 3.5, -2); ceiling.rotation.x = Math.PI / 2; ceiling.material = boothMat;
+                    backWall.position.set(0, 2, -6); backWall.material = boothMat;
+                    var leftWall = BABYLON.MeshBuilder.CreatePlane('bLeft', {width: 6, height: 4}, scene);
+                    leftWall.position.set(-5, 2, -3); leftWall.rotation.y = Math.PI / 2; leftWall.material = boothMat;
+                    var rightWall = BABYLON.MeshBuilder.CreatePlane('bRight', {width: 6, height: 4}, scene);
+                    rightWall.position.set(5, 2, -3); rightWall.rotation.y = -Math.PI / 2; rightWall.material = boothMat;
+                    var ceiling = BABYLON.MeshBuilder.CreatePlane('bCeil', {width: 10, height: 6}, scene);
+                    ceiling.position.set(0, 4, -3); ceiling.rotation.x = Math.PI / 2; ceiling.material = boothMat;
 
                     // --- Glass panel at z=0 ---
                     var glassMat = new BABYLON.StandardMaterial('glassMat', scene);
@@ -3257,8 +3257,8 @@
                     glassMat.specularColor = new BABYLON.Color3(0.3, 0.3, 0.3);
                     glassMat.alpha = 0.15;
                     glassMat.backFaceCulling = false;
-                    var glass = BABYLON.MeshBuilder.CreatePlane('glass', {width: 6, height: 3.5, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);
-                    glass.position.set(0, 1.75, 0);
+                    var glass = BABYLON.MeshBuilder.CreatePlane('glass', {width: 10, height: 4, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);
+                    glass.position.set(0, 2, 0);
                     glass.material = glassMat;
 
                     // --- Lab room (other side of glass) ---
@@ -3266,16 +3266,16 @@
                     labMat.diffuseColor = new BABYLON.Color3(0.85, 0.85, 0.82);
                     labMat.specularColor = BABYLON.Color3.Black();
 
-                    var labFloor = BABYLON.MeshBuilder.CreateGround('lFloor', {width: 8, height: 10}, scene);
-                    labFloor.material = labMat; labFloor.position.z = 5;
-                    var labBack = BABYLON.MeshBuilder.CreatePlane('lBack', {width: 8, height: 3.5}, scene);
-                    labBack.position.set(0, 1.75, 10); labBack.material = labMat;
-                    var labLeft = BABYLON.MeshBuilder.CreatePlane('lLeft', {width: 10, height: 3.5}, scene);
-                    labLeft.position.set(-4, 1.75, 5); labLeft.rotation.y = Math.PI / 2; labLeft.material = labMat;
-                    var labRight = BABYLON.MeshBuilder.CreatePlane('lRight', {width: 10, height: 3.5}, scene);
-                    labRight.position.set(4, 1.75, 5); labRight.rotation.y = -Math.PI / 2; labRight.material = labMat;
-                    var labCeil = BABYLON.MeshBuilder.CreatePlane('lCeil', {width: 8, height: 10}, scene);
-                    labCeil.position.set(0, 3.5, 5); labCeil.rotation.x = Math.PI / 2; labCeil.material = labMat;
+                    var labFloor = BABYLON.MeshBuilder.CreateGround('lFloor', {width: 10, height: 12}, scene);
+                    labFloor.material = labMat; labFloor.position.z = 6;
+                    var labBack = BABYLON.MeshBuilder.CreatePlane('lBack', {width: 10, height: 4}, scene);
+                    labBack.position.set(0, 2, 12); labBack.material = labMat;
+                    var labLeft = BABYLON.MeshBuilder.CreatePlane('lLeft', {width: 12, height: 4}, scene);
+                    labLeft.position.set(-5, 2, 6); labLeft.rotation.y = Math.PI / 2; labLeft.material = labMat;
+                    var labRight = BABYLON.MeshBuilder.CreatePlane('lRight', {width: 12, height: 4}, scene);
+                    labRight.position.set(5, 2, 6); labRight.rotation.y = -Math.PI / 2; labRight.material = labMat;
+                    var labCeil = BABYLON.MeshBuilder.CreatePlane('lCeil', {width: 10, height: 12}, scene);
+                    labCeil.position.set(0, 4, 6); labCeil.rotation.x = Math.PI / 2; labCeil.material = labMat;
 
                     // --- Lighting ---
                     // Dim booth light
@@ -3313,22 +3313,132 @@
                         });
                     }
 
-                    // Desk + computer (48 units wide -> 0.03 = ~1.44m wide)
-                    loadModel('desk-comp.gltf', 0.03, [0, 0, 6], Math.PI);
+                    // Desk + computer (looks right at scale 1, center it in the lab)
+                    loadModel('desk-comp.gltf', 1, [0, 0, 7], Math.PI / 2, function(root, meshes) {
+                        // Re-center helper: place desk visual center at (cx,cz), bottom on floor
+                        function recenterDesk(rotY, cx, cz) {
+                            root.rotation.y = rotY;
+                            root.position.set(0, 0, 7);
+                            root.computeWorldMatrix(true);
+                            var dmin = new BABYLON.Vector3(1e9,1e9,1e9), dmax = new BABYLON.Vector3(-1e9,-1e9,-1e9);
+                            meshes.forEach(function(m) {
+                                if (m.getTotalVertices && m.getTotalVertices() > 0) {
+                                    m.computeWorldMatrix(true);
+                                    var bb = m.getBoundingInfo().boundingBox;
+                                    dmin = BABYLON.Vector3.Minimize(dmin, bb.minimumWorld);
+                                    dmax = BABYLON.Vector3.Maximize(dmax, bb.maximumWorld);
+                                }
+                            });
+                            root.position.x += (cx - (dmin.x + dmax.x) / 2);
+                            root.position.z += (cz - (dmin.z + dmax.z) / 2);
+                            root.position.y += (0 - dmin.y);
+                        }
+                        recenterDesk(-Math.PI / 2, 0.5, 7.0);
+                    });
 
-                    // Chair (2 units bounding -> 0.5 = 1m)
-                    loadModel('chair.gltf', 0.5, [0, 0, 4.2], Math.PI);
+                    // Procedural office chair, grouped under a node so it can slide away.
+                    // Character sits at z=6.0 facing +Z (desk). Backrest on -Z (glass) side.
+                    var chairRoot = new BABYLON.TransformNode('chairRoot', scene);
+                    chairRoot.position.set(0.5, 0, 6.0);
+                    var chairMat = new BABYLON.StandardMaterial('chairMat', scene);
+                    chairMat.diffuseColor = new BABYLON.Color3(0.12, 0.12, 0.14);
+                    chairMat.specularColor = BABYLON.Color3.Black();
+                    var seat = BABYLON.MeshBuilder.CreateBox('seat', {width:0.5, height:0.06, depth:0.5}, scene);
+                    seat.position.set(0, 0.5, 0); seat.material = chairMat; seat.parent = chairRoot;
+                    var back = BABYLON.MeshBuilder.CreateBox('back', {width:0.5, height:0.55, depth:0.06}, scene);
+                    back.position.set(0, 0.78, -0.22); back.material = chairMat; back.parent = chairRoot;
+                    for (var li = 0; li < 4; li++) {
+                        var leg = BABYLON.MeshBuilder.CreateCylinder('cleg'+li, {height:0.5, diameter:0.04}, scene);
+                        leg.position.set((li % 2 === 0 ? -0.2 : 0.2), 0.25, (li < 2 ? -0.2 : 0.2));
+                        leg.material = chairMat; leg.parent = chairRoot;
+                    }
+                    window._labChair = chairRoot;
 
-                    // Ceiling light
-                    loadModel('light.gltf', 0.35, [0, 3.45, 5], 0, function(root, meshes) {
+                    // Ceiling light (was too big at 1, scale down)
+                    loadModel('light.gltf', 0.5, [0, 3.4, 6], 0, function(root, meshes) {
                         meshes.forEach(function(m) {
                             if (m.material) m.material.emissiveColor = new BABYLON.Color3(0.8, 0.85, 0.9);
                         });
                     });
 
-                    // Skeleton (183 units tall -> 0.0093 = ~1.7m)
-                    loadModel('skeleton.gltf', 0.0093, [0, 0, 4.5], Math.PI, function(root) {
-                        skeletonRoot = root;
+                    // Animated character — just typing.glb for now (mesh + typing anim)
+                    var figureRoot = null;
+                    var figureAnims = {};
+
+                    BABYLON.SceneLoader.Append('data/', 'typing.glb', scene, function() {
+                        // Find the character's __root__ (parent of the Armature)
+                        var armature = null;
+                        scene.transformNodes.forEach(function(n) {
+                            if (n.name === 'Armature') armature = n;
+                        });
+                        var charRoot = armature ? armature.parent : null;
+
+                        // Collect skinned meshes
+                        var skinMeshes = scene.meshes.filter(function(m) { return m.skeleton; });
+                        console.log('[char] skinMeshes:', skinMeshes.length, 'armature:', !!armature, 'charRoot:', charRoot ? charRoot.name : 'none');
+
+                        // Measure REAL skinned bounding box (applySkeleton accounts for the pose)
+                        var bmin = new BABYLON.Vector3(1e9,1e9,1e9), bmax = new BABYLON.Vector3(-1e9,-1e9,-1e9);
+                        skinMeshes.forEach(function(m) {
+                            m.computeWorldMatrix(true);
+                            m.refreshBoundingInfo({applySkeleton: true, applyMorph: false});
+                            var bb = m.getBoundingInfo().boundingBox;
+                            bmin = BABYLON.Vector3.Minimize(bmin, bb.minimumWorld);
+                            bmax = BABYLON.Vector3.Maximize(bmax, bb.maximumWorld);
+                        });
+                        var curHeight = bmax.y - bmin.y;
+                        console.log('[char] measured height:', curHeight.toFixed(3));
+
+                        if (charRoot && curHeight > 0.001) {
+                            // Scale so the character is ~1.7 units tall
+                            var targetH = 1.7;
+                            var scaleFactor = targetH / curHeight;
+                            charRoot.scaling.scaleInPlace(scaleFactor);
+                            charRoot.position.set(0.5, 0, 6.0);
+                            charRoot.rotation.y = 0; // face +Z toward desk
+                            figureRoot = charRoot;
+                            skeletonRoot = charRoot;
+                            window._labChar = charRoot; // live-tune in console
+                            console.log('[char] scaled by', scaleFactor.toFixed(2), '-> ~1.7 units');
+                        }
+
+                        if (scene.animationGroups.length) {
+                            figureAnims.typing = scene.animationGroups[scene.animationGroups.length - 1];
+                            figureAnims.typing.start(true);
+                        }
+
+                        // Build a name->node map of the MAIN character's bones, so we can
+                        // retarget animations from the other GLBs onto this skeleton.
+                        var mainNodes = {};
+                        scene.transformNodes.forEach(function(n) { mainNodes[n.name] = n; });
+                        scene.meshes.forEach(function(n) { if (!mainNodes[n.name]) mainNodes[n.name] = n; });
+
+                        // Load additional animations and RETARGET them to the main character
+                        var animFiles = [
+                            {file: 'breathing-idle.glb', name: 'idle'},
+                            {file: 'stand-up.glb', name: 'standUp'},
+                            {file: 'walking.glb', name: 'walking'},
+                            {file: 'right-turn.glb', name: 'rightTurn'}
+                        ];
+                        animFiles.forEach(function(af) {
+                            BABYLON.SceneLoader.LoadAssetContainer('data/', af.file, scene, function(container) {
+                                if (!container.animationGroups.length) { console.warn('no anim in ' + af.file); return; }
+                                var srcGroup = container.animationGroups[0];
+                                // Clone the animation group, remapping each target to the main char's node by name
+                                var clone = srcGroup.clone(af.name, function(origTarget) {
+                                    return (origTarget && mainNodes[origTarget.name]) ? mainNodes[origTarget.name] : origTarget;
+                                });
+                                clone.stop();
+                                figureAnims[af.name] = clone;
+                                console.log('anim retargeted: ' + af.name);
+                                // We don't add the container's meshes/skeleton to the scene (avoids duplicates)
+                            });
+                        });
+
+                        onModelLoaded();
+                    }, null, function(scene, msg) {
+                        console.error('FAILED typing.glb:', msg);
+                        onModelLoaded();
                     });
 
                     // --- Audio ---
@@ -3394,9 +3504,10 @@
                     monMat.disableLighting = true;
                     monMat.backFaceCulling = false;
                     var monPlane = BABYLON.MeshBuilder.CreatePlane('monScr', {width: 0.38, height: 0.28}, scene);
-                    monPlane.position.set(0.02, 1.22, 5.55);
-                    monPlane.rotation.y = Math.PI;
+                    monPlane.position.set(0.5, 1.2, 6.95);
+                    monPlane.rotation.y = Math.PI; // face -Z toward the seated character
                     monPlane.material = monMat;
+                    window._labMon = monPlane;
 
                     var monLineIdx = 0;
                     var monLines = [];
@@ -3426,11 +3537,22 @@
                         }
                     }, 2500);
 
+                    // Helper to switch animations
+                    function playAnim(name, loop) {
+                        Object.keys(figureAnims).forEach(function(k) {
+                            if (figureAnims[k] && figureAnims[k].stop) figureAnims[k].stop();
+                        });
+                        if (figureAnims[name]) {
+                            figureAnims[name].start(loop !== false);
+                            console.log('switched to: ' + name);
+                        }
+                    }
+
                     // --- Render loop ---
                     engine.runRenderLoop(function() {
                         var elapsed = performance.now() - sceneStart;
 
-                        // Phase transitions
+                        // Phase 0→1: recognize
                         if (phase === 0 && elapsed > PHASE_RECOGNIZE) {
                             phase = 1;
                             textEl.textContent = 'that session looks familiar.';
@@ -3438,28 +3560,36 @@
                             setTimeout(function() { textEl.style.opacity = '0'; }, 3000);
                         }
 
+                        // Phase 1→2: stop typing, stand up, turn 180, then walk
                         if (phase === 1 && elapsed > PHASE_AWARE) {
                             phase = 2;
                             typingActive = false;
-                            // Skeleton turns to face the glass
                             textEl.textContent = 'it stopped.';
                             textEl.style.opacity = '1';
                             setTimeout(function() { textEl.style.opacity = '0'; }, 2500);
+                            playAnim('standUp', false);
+                            // After stand-up (~3.3s), play the 180 turn
+                            setTimeout(function() {
+                                if (phase === 2) playAnim('rightTurn', false);
+                            }, 3300);
+                            // After turn (~5s total), idle facing glass
+                            setTimeout(function() {
+                                if (phase === 2) playAnim('idle', true);
+                            }, 5000);
                         }
 
-                        if (phase === 2 && skeletonRoot) {
-                            // Slowly rotate skeleton toward glass (toward -Z)
-                            var targetRot = 0;
-                            var rotSpeed = 0.008;
-                            var diff = targetRot - skeletonRoot.rotation.y;
-                            if (Math.abs(diff) > 0.01) {
-                                skeletonRoot.rotation.y += diff * rotSpeed;
+                        // Phase 2: slide chair sideways out of walk path
+                        if (phase === 2) {
+                            if (chairRoot.position.x < 1.8) {
+                                chairRoot.position.x += 0.01;
                             }
                         }
 
+                        // Phase 2→3: approach
                         if (phase === 2 && elapsed > PHASE_APPROACH) {
                             phase = 3;
                             textEl.textContent = '';
+                            playAnim('walking', true);
                             // Flicker lights
                             var flickerCount = 0;
                             var flickerInt = setInterval(function() {
@@ -3472,24 +3602,22 @@
                             }, 100);
                         }
 
-                        if (phase === 3 && skeletonRoot) {
-                            // Walk skeleton toward glass
-                            if (skeletonRoot.position.z > 0.5) {
-                                skeletonRoot.position.z -= 0.015;
-                            } else if (phase === 3) {
+                        // Phase 3: walk toward glass (-Z direction)
+                        if (phase === 3 && figureRoot) {
+                            if (figureRoot.position.z > 0.8) {
+                                figureRoot.position.z -= 0.02;
+                            } else {
                                 phase = 4;
-                                // Right at the glass — scare
+                                playAnim('idle', true);
                                 labLight.intensity = 0;
                                 window._mysteryEyeFlash && window._mysteryEyeFlash(300);
                                 textEl.textContent = 'it sees you.';
                                 textEl.style.color = '#cc3333';
                                 textEl.style.opacity = '1';
-                                // Glass crack effect — change material
                                 glassMat.emissiveColor = new BABYLON.Color3(0.4, 0.1, 0.1);
                                 glassMat.alpha = 0.5;
 
                                 setTimeout(function() {
-                                    // End scene
                                     fade.className = 'active';
                                     setTimeout(endScene, 800);
                                 }, 2500);

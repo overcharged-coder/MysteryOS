@@ -572,13 +572,13 @@
   ],
   "images": [
     {
-      "uri": "textures/lambert1_baseColor.jpeg"
+      "uri": "chair_lambert1_baseColor.jpeg"
     },
     {
-      "uri": "textures/lambert1_metallicRoughness.png"
+      "uri": "chair_lambert1_metallicRoughness.png"
     },
     {
-      "uri": "textures/lambert1_normal.png"
+      "uri": "chair_lambert1_normal.png"
     }
   ],
   "materials": [
